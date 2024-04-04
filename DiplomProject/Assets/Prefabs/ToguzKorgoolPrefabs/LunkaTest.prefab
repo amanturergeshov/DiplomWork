@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 3655827410527736612}
   - component: {fileID: 3655827410527736615}
   - component: {fileID: 3655827410527736614}
-  m_Layer: 0
+  - component: {fileID: -8933098273303843423}
+  m_Layer: 6
   m_Name: LunkaTest
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,3 +98,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-8933098273303843423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3655827410527736609}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d1b6f723c8a674a8a53ef6091bd165, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  korgoolPrefab: {fileID: 258662870022528993, guid: 0727da15eb9a9cd4caf1e5afea65c84b, type: 3}
+  Korgools: []
+  CanBeTuz: 0
+  Tuz: 0
+  index: 0
