@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class S_PlayerController : MonoBehaviour
 {
+    // Переменные 
     public LayerMask layer;
     public List<GameObject> OurLunki;
     private S_Lunka ClickedLunka;
@@ -11,7 +12,6 @@ public class S_PlayerController : MonoBehaviour
     void Start()
     {
     }
-
     // Update is called once per frame
     void Update()
     {
@@ -23,6 +23,7 @@ public class S_PlayerController : MonoBehaviour
 
     void ClickLunka()
     {
+        //Пускаем луч с камеры
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if(Physics.Raycast(ray, out hit, 1000f, layer))
@@ -41,27 +42,28 @@ public class S_PlayerController : MonoBehaviour
                     S_Lunka Lunka=ClickedLunka.NextLunka;
                     if (ClickedLunka.KorgoolsCount==1)
                     {
-                        Lunka.AddKorgool();
+                        Lunka.AddKorgool(ClickedLunka.Korgools[0]);
                         
                         Debug.Log(Lunka.index+" and "+Lunka.KorgoolsCount);
                     }
                     else{
-                        for(int i=0; i<ClickedLunka.KorgoolsCount-1; i++)
-                        {
-                            Lunka.AddKorgool();
-                            
-                            Debug.Log(Lunka.index+" and "+Lunka.KorgoolsCount);
-
-                            if(i<ClickedLunka.KorgoolsCount-2)
+                        if(ClickedLunka.KorgoolsCount>0){
+                            for(int i=0; i<ClickedLunka.KorgoolsCount-1; i++)
                             {
-                                Lunka = Lunka.NextLunka;
+                                Debug.Log(i);
+                                Lunka.AddKorgool(ClickedLunka.Korgools[i]);
+                                Debug.Log(Lunka.index+" and "+Lunka.KorgoolsCount);
+                                if(i<ClickedLunka.KorgoolsCount-2)
+                                {
+                                    Lunka = Lunka.NextLunka;
+                                }
                             }
-                        }
+                            }
                     }
                     if(!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount%2==0)
                     {
                         OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
-                        Lunka.Clear();//Убираем чтоб добавились очки
+                        Lunka.TakingKorgools();//Убираем чтоб добавились очки
                     }
                     ClickedLunka.Remove();
                 }
