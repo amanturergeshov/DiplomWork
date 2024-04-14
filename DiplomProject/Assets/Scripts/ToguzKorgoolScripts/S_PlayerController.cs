@@ -11,7 +11,17 @@ public class S_PlayerController : MonoBehaviour
     public GameObject OurScoreLunka;
     void Start()
     {
+        // Находим все объекты с компонентом S_Lunka на сцене
+        S_Lunka[] allLunki = FindObjectsOfType<S_Lunka>();
 
+        // Подписываемся на событие ScoreApplied для каждой лунки, если она не содержится в OurLunki
+        foreach (S_Lunka lunka in allLunki)
+        {
+            if (!OurLunki.Contains(lunka.gameObject))
+            {
+                lunka.ScoreApplied += HandleScoreApplied;
+            }
+        }
     }
 
 
@@ -65,7 +75,7 @@ public class S_PlayerController : MonoBehaviour
                     }
                     if(!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount%2==0)
                     {
-                        OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
+                        // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
                         Lunka.TakenLunka=true;//Убираем чтоб добавились очки
                     }
                     ClickedLunka.Remove();
@@ -77,4 +87,11 @@ public class S_PlayerController : MonoBehaviour
                 }
         }
     }
+//*****************************************************DELEGATE**************************************
+    void HandleScoreApplied(int score)
+    {
+        // Вызываем нужную функцию при получении счета
+        OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(score);
+    }
+
 }

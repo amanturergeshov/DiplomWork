@@ -17,6 +17,10 @@ public class S_Lunka : MonoBehaviour
 
     public S_Lunka NextLunka;
 
+     // Делегат и событие для вызова функции ApplyScore
+    public delegate void ScoreAppliedEventHandler(int score);
+    public event ScoreAppliedEventHandler ScoreApplied;
+
 //*************************START************************************************
     void Start()
     {
@@ -150,6 +154,9 @@ private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransf
 //***************************************TAKING KORGOOLS***************************************
     public void TakingKorgools()
     {
+        
+        // Вызываем событие для передачи счета
+        ScoreApplied?.Invoke(KorgoolsCount);
         for(int i=0; i<Korgools.Count; i++)
             {
                 Destroy(Korgools[i]);
