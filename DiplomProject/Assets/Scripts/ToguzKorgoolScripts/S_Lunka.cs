@@ -11,8 +11,9 @@ public class S_Lunka : MonoBehaviour
     public bool CanBeTuz;
     public bool Tuz;
     public int index;
-    public Vector2 offset;
     public int KorgoolsCount;
+
+    public bool TakenLunka=false;
 
     public S_Lunka NextLunka;
 
@@ -110,6 +111,11 @@ private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransf
 
     // Устанавливаем точную целевую позицию (избегаем погрешности)
     objectTransform.position = targetPosition;
+        
+    if(TakenLunka==true)
+    {
+        TakingKorgools();
+    }
 }
 
 
@@ -150,5 +156,6 @@ private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransf
             }
         Korgools.Clear();
         KorgoolsCount = 0;
+        TakenLunka=false;
     }
 }

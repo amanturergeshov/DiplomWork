@@ -11,7 +11,10 @@ public class S_PlayerController : MonoBehaviour
     public GameObject OurScoreLunka;
     void Start()
     {
+
     }
+
+
     // Update is called once per frame
     void Update()
     {
@@ -63,7 +66,7 @@ public class S_PlayerController : MonoBehaviour
                     if(!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount%2==0)
                     {
                         OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
-                        Lunka.TakingKorgools();//Убираем чтоб добавились очки
+                        Lunka.TakenLunka=true;//Убираем чтоб добавились очки
                     }
                     ClickedLunka.Remove();
                 }
