@@ -90,6 +90,7 @@ private Vector3 CalculateTargetPosition(int korgoolIndex)
 //*******************************************MOVE************************************************
 private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransform, Vector3 targetPosition)
 {
+    yield return new WaitForSeconds(0.3f);
     float duration = 1f; // Длительность анимации (в секундах)
     float elapsedTime = 0f;
 

@@ -30,11 +30,11 @@ public class S_PlayerController : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            ClickLunka();
+            StartCoroutine(ClickLunka());
         }
     }
 
-    void ClickLunka()
+    IEnumerator ClickLunka()
     {
         //Пускаем луч с камеры
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -70,6 +70,8 @@ public class S_PlayerController : MonoBehaviour
                                 {
                                     Lunka = Lunka.NextLunka;
                                 }
+
+                                yield return new WaitForSeconds(0.35f);
                             }
                             }
                     }
