@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2920,6 +2920,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isAI: 0
   isMyTurn: 1
+  delayBetweenMove: 0.35
   Oponent: {fileID: 745839139}
   layer:
     serializedVersion: 2
@@ -4293,6 +4294,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isAI: 1
   isMyTurn: 0
+  delayBetweenMove: 0.35
   Oponent: {fileID: 541400424}
   layer:
     serializedVersion: 2

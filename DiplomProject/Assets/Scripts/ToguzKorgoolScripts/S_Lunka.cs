@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 
 public class S_Lunka : MonoBehaviour
@@ -13,34 +14,40 @@ public class S_Lunka : MonoBehaviour
     public int index;
     public int KorgoolsCount;
 
-    public bool TakenLunka=false;
+    [HideInInspector]
+    public float moveTime = 1f;
+
+    public bool TakenLunka = false;
 
     public S_Lunka NextLunka;
 
-     // Делегат и событие для вызова функции ApplyScore
+    // Делегат и событие для вызова функции ApplyScore
     public delegate void ScoreAppliedEventHandler(int score);
     public event ScoreAppliedEventHandler ScoreApplied;
 
-//*************************START************************************************
+    //  Делегат и событие для вызова метода CompleteTurn
+
+    //*************************START************************************************
     void Start()
     {
+        moveTime = 0.7f;
         SpawnObjects(9);
     }
 
-//*************************************ON CLICKED************************************************
+    //*************************************ON CLICKED************************************************
     public void OnClicked()
     {
         // Debug.Log(KorgoolsCount);
 
-        
+
     }
 
-//******************************************REMOVE************************************************
+    //******************************************REMOVE************************************************
     public void Remove()
     {
-        if(KorgoolsCount==1)
+        if (KorgoolsCount == 1)
         {
-            for(int i=0; i<Korgools.Count; i++)
+            for (int i = 0; i < Korgools.Count; i++)
             {
                 // Destroy(Korgools[i]);
             }
@@ -49,10 +56,10 @@ public class S_Lunka : MonoBehaviour
         }
         else
         {
-            if(Korgools.Count>0)
+            if (Korgools.Count > 0)
             {
                 GameObject LastKorgool = Korgools.Last();
-                for(int i=0; i<Korgools.Count-1; i++)
+                for (int i = 0; i < Korgools.Count - 1; i++)
                 {
                     // Destroy(Korgools[i]);
                 }
@@ -61,70 +68,70 @@ public class S_Lunka : MonoBehaviour
                 KorgoolsCount = Korgools.Count();
             }
         }
-        
+
     }
 
-//**********************************ADD KORGOOL************************************************
-public void AddKorgool(GameObject Korgool)
-{
-    KorgoolsCount++;
-    Korgools.Add(Korgool);
-    int TempKorgoolCount = KorgoolsCount;
-    // KorgoolsCount = 1;
-
-    // Определяем позицию, к которой нужно двигаться
-    Vector3 targetPosition = CalculateTargetPosition(TempKorgoolCount);
-
-    // Запускаем корутину для плавного перемещения
-    StartCoroutine(MoveTowardsTarget(Korgool, Korgool.transform, targetPosition));
-}
-//**********************************CALCULATE TARGET POSITION************************************
-private Vector3 CalculateTargetPosition(int korgoolIndex)
-{
-    korgoolIndex--;
-    int rowCount = 3; // Количество строк из метода SpawnObjects
-    float xOffset = ((korgoolIndex % rowCount) - 1) * 0.25f; // Смещение по X, аналогично методу SpawnObjects
-    float zOffset = ((korgoolIndex / rowCount) - 1) * 0.25f; // Смещение по Z, аналогично методу SpawnObjects
-    return transform.position + Vector3.up * 1.5f + new Vector3(xOffset, 0f, zOffset);
-}
-//*******************************************MOVE************************************************
-private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransform, Vector3 targetPosition)
-{
-    yield return new WaitForSeconds(0.3f);
-    float duration = 1f; // Длительность анимации (в секундах)
-    float elapsedTime = 0f;
-
-    Vector3 startPosition = objectTransform.position;
-
-    // Пока не достигнут конечный пункт, продолжаем двигаться
-    while (elapsedTime < duration)
+    //**********************************ADD KORGOOL************************************************
+    public void AddKorgool(GameObject Korgool)
     {
-        // Вычисляем прогресс анимации от 0 до 1
-        float t = Mathf.Clamp01(elapsedTime / duration);
+        KorgoolsCount++;
+        Korgools.Add(Korgool);
+        int TempKorgoolCount = KorgoolsCount;
+        // KorgoolsCount = 1;
 
-        if(Korgool)
+        // Определяем позицию, к которой нужно двигаться
+        Vector3 targetPosition = CalculateTargetPosition(TempKorgoolCount);
+
+        // Запускаем корутину для плавного перемещения
+        StartCoroutine(MoveTowardsTarget(Korgool, Korgool.transform, targetPosition));
+    }
+    //**********************************CALCULATE TARGET POSITION************************************
+    private Vector3 CalculateTargetPosition(int korgoolIndex)
+    {
+        korgoolIndex--;
+        int rowCount = 3; // Количество строк из метода SpawnObjects
+        float xOffset = ((korgoolIndex % rowCount) - 1) * 0.25f; // Смещение по X, аналогично методу SpawnObjects
+        float zOffset = ((korgoolIndex / rowCount) - 1) * 0.25f; // Смещение по Z, аналогично методу SpawnObjects
+        return transform.position + Vector3.up * 1.5f + new Vector3(xOffset, 0f, zOffset);
+    }
+    //*******************************************MOVE************************************************
+    private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransform, Vector3 targetPosition)
+    {
+        yield return new WaitForSeconds(0.3f);
+        float duration = moveTime; // Длительность анимации (в секундах)
+        float elapsedTime = 0f;
+
+        Vector3 startPosition = objectTransform.position;
+
+        // Пока не достигнут конечный пункт, продолжаем двигаться
+        while (elapsedTime < duration)
         {
-            // Применяем интерполяцию по дуге между начальной и конечной позициями
-            objectTransform.position = Vector3.Slerp(startPosition, targetPosition, t);
+            // Вычисляем прогресс анимации от 0 до 1
+            float t = Mathf.Clamp01(elapsedTime / duration);
 
-            // Обновляем время
-            elapsedTime += Time.deltaTime;
+            if (Korgool)
+            {
+                // Применяем интерполяцию по дуге между начальной и конечной позициями
+                objectTransform.position = Vector3.Slerp(startPosition, targetPosition, t);
+
+                // Обновляем время
+                elapsedTime += Time.deltaTime;
+            }
+            // Ждем один кадр
+            yield return null;
         }
-        // Ждем один кадр
-        yield return null;
+
+        // Устанавливаем точную целевую позицию (избегаем погрешности)
+        objectTransform.position = targetPosition;
+
+        if (TakenLunka == true)
+        {
+            TakingKorgools();
+        }
     }
 
-    // Устанавливаем точную целевую позицию (избегаем погрешности)
-    objectTransform.position = targetPosition;
-        
-    if(TakenLunka==true)
-    {
-        TakingKorgools();
-    }
-}
 
-
-//***************************************SPAWN OBJECTS************************************************
+    //***************************************SPAWN OBJECTS************************************************
     void SpawnObjects(int count)
     {
         Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
@@ -152,18 +159,18 @@ private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransf
         }
         KorgoolsCount = Korgools.Count;
     }
-//***************************************TAKING KORGOOLS***************************************
+    //***************************************TAKING KORGOOLS***************************************
     public void TakingKorgools()
     {
-        
+
         // Вызываем событие для передачи счета
         ScoreApplied?.Invoke(KorgoolsCount);
-        for(int i=0; i<Korgools.Count; i++)
-            {
-                Destroy(Korgools[i]);
-            }
+        for (int i = 0; i < Korgools.Count; i++)
+        {
+            Destroy(Korgools[i]);
+        }
         Korgools.Clear();
         KorgoolsCount = 0;
-        TakenLunka=false;
+        TakenLunka = false;
     }
 }

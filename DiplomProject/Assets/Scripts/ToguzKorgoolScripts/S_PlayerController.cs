@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,7 @@ public class S_PlayerController : MonoBehaviour
     // Переменные 
     public bool isAI;
     public bool isMyTurn;
+    float delayBetweenMove=0.35f;
     public S_PlayerController Oponent;
     public LayerMask layer;
     public List<GameObject> OurLunki;
@@ -17,7 +19,6 @@ public class S_PlayerController : MonoBehaviour
     {
         // Находим все объекты с компонентом S_Lunka на сцене
         S_Lunka[] allLunki = FindObjectsOfType<S_Lunka>();
-
         // Подписываемся на событие ScoreApplied для каждой лунки, если она не содержится в OurLunki
         foreach (S_Lunka lunka in allLunki)
         {
@@ -42,11 +43,13 @@ public class S_PlayerController : MonoBehaviour
         }
         else if (isMyTurn == true && isAI == true)
         {
-            Debug.Log(isMyTurn);
-            Oponent.isMyTurn = true;
             isMyTurn = false;
             StartCoroutine(AIThinking());
         }
+
+        Debug.Log("isAI: " + isAI + ", isMyTurn: " + isMyTurn);
+
+
     }
 
     void ClickLunka()
@@ -61,9 +64,8 @@ public class S_PlayerController : MonoBehaviour
             if (hitObject != null && OurLunki.Contains(hitObject))
             {
                 ClickedLunka = hitObject.GetComponent<S_Lunka>();
-                StartCoroutine(Turn(ClickedLunka));
-                Oponent.isMyTurn = true;
                 isMyTurn = false;
+                StartCoroutine(Turn(ClickedLunka));
             }
             else
             {
@@ -81,8 +83,6 @@ public class S_PlayerController : MonoBehaviour
         if (ClickedLunka.KorgoolsCount == 1)
         {
             Lunka.AddKorgool(ClickedLunka.Korgools[0]);
-
-            Debug.Log(Lunka.index + " and " + Lunka.KorgoolsCount);
         }
         else
         {
@@ -90,15 +90,13 @@ public class S_PlayerController : MonoBehaviour
             {
                 for (int i = 0; i < ClickedLunka.KorgoolsCount - 1; i++)
                 {
-                    Debug.Log(i);
                     Lunka.AddKorgool(ClickedLunka.Korgools[i]);
-                    Debug.Log(Lunka.index + " and " + Lunka.KorgoolsCount);
                     if (i < ClickedLunka.KorgoolsCount - 2)
                     {
                         Lunka = Lunka.NextLunka;
                     }
 
-                    yield return new WaitForSeconds(0.35f);
+                    yield return new WaitForSeconds(delayBetweenMove);
                 }
             }
         }
@@ -107,6 +105,8 @@ public class S_PlayerController : MonoBehaviour
             // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
             Lunka.TakenLunka = true;//Убираем чтоб добавились очки
         }
+        yield return new WaitForSeconds(Lunka.moveTime + 0.25f);
+        Oponent.isMyTurn=true;
         ClickedLunka.Remove();
     }
     //*****************************************************DELEGATE**************************************
@@ -115,12 +115,12 @@ public class S_PlayerController : MonoBehaviour
         // Вызываем нужную функцию при получении счета
         OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(score);
     }
-
+    //**************************************AI THINKING IMITATION********************************************
     IEnumerator AIThinking()
     {
-        yield return new WaitForSeconds(Random.Range(3, 5));
+        yield return new WaitForSeconds(Random.Range(1, 3));
         S_Lunka Lunka = null;
-        while (true)
+        while (true)    
         {
             int index = Random.Range(0, OurLunki.Count);
             if (OurLunki[index].GetComponent<S_Lunka>().KorgoolsCount > 0)
@@ -131,8 +131,9 @@ public class S_PlayerController : MonoBehaviour
         }
         if (Lunka)
         {
-            // Debug.Log("AD");
             StartCoroutine(Turn(Lunka));
         }
     }
+    //********************************************COMPLETE TURN***************************************************
+
 }
