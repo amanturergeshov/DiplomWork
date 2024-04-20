@@ -11,11 +11,15 @@ public class S_Lunka : MonoBehaviour
     public List<GameObject> Korgools;
     public bool CanBeTuz;
     public bool Tuz;
+
+    private float xKorgoolOffset = 0.30f;
+    private float zKorgoolOffset = 0.30f;
     public int index;
     public int KorgoolsCount;
 
     [HideInInspector]
     public float moveTime = 1f;
+    private float RebuildMoveTime = 0.3f;
 
     public bool TakenLunka = false;
 
@@ -90,8 +94,8 @@ public class S_Lunka : MonoBehaviour
     {
         korgoolIndex--;
         int rowCount = 3; // Количество строк из метода SpawnObjects
-        float xOffset = ((korgoolIndex % rowCount) - 1) * 0.25f; // Смещение по X, аналогично методу SpawnObjects
-        float zOffset = ((korgoolIndex / rowCount) - 1) * 0.25f; // Смещение по Z, аналогично методу SpawnObjects
+        float xOffset = ((korgoolIndex % rowCount) - 1) * xKorgoolOffset; // Смещение по X, аналогично методу SpawnObjects
+        float zOffset = ((korgoolIndex / rowCount) - 1) * zKorgoolOffset; // Смещение по Z, аналогично методу SpawnObjects
         return transform.position + Vector3.up * 1.5f + new Vector3(xOffset, 0f, zOffset);
     }
     //*******************************************MOVE************************************************
@@ -128,6 +132,10 @@ public class S_Lunka : MonoBehaviour
         {
             TakingKorgools();
         }
+        else
+        {
+            StartCoroutine(RebuildKorgoolsSmoothly());
+        }
     }
 
 
@@ -149,8 +157,8 @@ public class S_Lunka : MonoBehaviour
                 if (index < numberOfObjects)
                 {
                     // Вычисляем смещение относительно середины количества столбцов и строк
-                    float xOffset = (j - middleRow) * 0.25f;
-                    float zOffset = (i - middleColumn) * 0.25f;
+                    float xOffset = (j - middleRow) * xKorgoolOffset;
+                    float zOffset = (i - middleColumn) * zKorgoolOffset;
                     Vector3 randomOffset = new Vector3(xOffset, 0f, zOffset); // смещение только по оси X и Z
                     GameObject newKorgool = Instantiate(korgoolPrefab, spawnPosition + randomOffset, Quaternion.identity);
                     Korgools.Add(newKorgool);
@@ -162,7 +170,7 @@ public class S_Lunka : MonoBehaviour
     //***************************************TAKING KORGOOLS***************************************
     public void TakingKorgools()
     {
-
+        Debug.Log("VYZVALSYA?");
         // Вызываем событие для передачи счета
         ScoreApplied?.Invoke(KorgoolsCount);
         for (int i = 0; i < Korgools.Count; i++)
@@ -172,5 +180,84 @@ public class S_Lunka : MonoBehaviour
         Korgools.Clear();
         KorgoolsCount = 0;
         TakenLunka = false;
+    }
+    //************************************************REBUILD*******************************************
+
+    private IEnumerator RebuildKorgoolsSmoothly()
+    {
+        // Вычисляем количество рядов и столбцов
+        int rowCount = 3;
+        int columnCount = Mathf.CeilToInt((float)KorgoolsCount / rowCount);
+
+        // Вычисляем смещение между корголами
+        float xOffset = xKorgoolOffset;
+        float zOffset = zKorgoolOffset;
+
+        // Начальная позиция для первого коргола
+        Vector3 startPosition = transform.position + Vector3.up * 1.5f - new Vector3((rowCount - 1) * xOffset / 2f, 0f, (columnCount - 1) * zOffset / 2f);
+
+        // Индекс текущего коргола
+        int korgoolIndex = 0;
+
+        // Проходимся по всем рядам и столбцам
+        for (int i = 0; i < columnCount; i++)
+        {
+            for (int j = 0; j < rowCount; j++)
+            {
+                // Проверяем, есть ли коргол в текущей позиции
+                if (korgoolIndex < Korgools.Count)
+                {
+                    // Вычисляем целевую позицию для текущего коргола
+                    Vector3 targetPosition = startPosition + new Vector3(j * xOffset, 0f, i * zOffset);
+
+                    // Получаем текущий коргол
+                    GameObject currentKorgool = Korgools[korgoolIndex];
+
+                    // Запускаем анимацию перемещения текущего коргола к целевой позиции
+                    StartCoroutine(MoveKorgoolSmoothly(currentKorgool, currentKorgool.transform, targetPosition));
+
+                    // Увеличиваем индекс текущего коргола
+                    korgoolIndex++;
+                }
+            }
+        }
+
+        // Ждем завершения анимации перемещения всех корголов
+        yield return new WaitForSeconds(moveTime);
+
+        // Очищаем список корголов (если это необходимо)
+        for (int i = korgoolIndex; i < Korgools.Count; i++)
+        {
+            Destroy(Korgools[i]);
+        }
+        Korgools.RemoveRange(korgoolIndex, Korgools.Count - korgoolIndex);
+    }
+
+    // Метод для плавного перемещения коргола в новую позицию
+    private IEnumerator MoveKorgoolSmoothly(GameObject Korgool, Transform objectTransform, Vector3 targetPosition)
+    {
+        float elapsedTime = 0f;
+
+        // Запоминаем начальную позицию коргола
+        Vector3 startPosition = objectTransform.position;
+
+        // Проходим анимацию до целевой позиции
+        while (elapsedTime < RebuildMoveTime)
+        {
+            // Вычисляем прогресс анимации от 0 до 1
+            float t = Mathf.Clamp01(elapsedTime / RebuildMoveTime);
+
+            // Применяем интерполяцию между начальной и целевой позициями
+            objectTransform.position = Vector3.Lerp(startPosition, targetPosition, t);
+
+            // Увеличиваем время
+            elapsedTime += Time.deltaTime;
+
+            // Ждем один кадр
+            yield return null;
+        }
+
+        // Устанавливаем точную целевую позицию (избегаем погрешности)
+        objectTransform.position = targetPosition;
     }
 }

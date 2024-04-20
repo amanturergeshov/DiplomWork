@@ -9,7 +9,7 @@ public class S_PlayerController : MonoBehaviour
     // Переменные 
     public bool isAI;
     public bool isMyTurn;
-    float delayBetweenMove=0.35f;
+    float delayBetweenMove = 0.35f;
     public S_PlayerController Oponent;
     public LayerMask layer;
     public List<GameObject> OurLunki;
@@ -64,7 +64,6 @@ public class S_PlayerController : MonoBehaviour
             if (hitObject != null && OurLunki.Contains(hitObject))
             {
                 ClickedLunka = hitObject.GetComponent<S_Lunka>();
-                isMyTurn = false;
                 StartCoroutine(Turn(ClickedLunka));
             }
             else
@@ -80,34 +79,38 @@ public class S_PlayerController : MonoBehaviour
     IEnumerator Turn(S_Lunka ClickedLunka)
     {
         S_Lunka Lunka = ClickedLunka.NextLunka;
-        if (ClickedLunka.KorgoolsCount == 1)
+        if (ClickedLunka.KorgoolsCount == 1)//Первый возможный ход
         {
+            isMyTurn = false;
             Lunka.AddKorgool(ClickedLunka.Korgools[0]);
+            ClickedLunka.Remove();
+            StartCoroutine(CompleteTurn(Lunka));
         }
         else
         {
-            if (ClickedLunka.KorgoolsCount > 0)
+            if (ClickedLunka.KorgoolsCount > 0)//Второй возможный ход
             {
-                for (int i = 0; i < ClickedLunka.KorgoolsCount - 1; i++)
+                isMyTurn = false;
+                int IterationCount = ClickedLunka.KorgoolsCount;
+                List<GameObject> KorgoolsToMove = new List<GameObject>(ClickedLunka.Korgools);
+                ClickedLunka.Remove();
+
+                // Удаляем из KorgoolsToMove элементы, которые присутствуют в ClickedLunka.Korgools
+                KorgoolsToMove.RemoveAll(korgool => ClickedLunka.Korgools.Contains(korgool));
+                for (int i = 0; i < IterationCount - 1; i++)
                 {
-                    Lunka.AddKorgool(ClickedLunka.Korgools[i]);
-                    if (i < ClickedLunka.KorgoolsCount - 2)
+                    Lunka.AddKorgool(KorgoolsToMove[i]);
+                    if (i < KorgoolsToMove.Count - 1)
                     {
                         Lunka = Lunka.NextLunka;
                     }
 
                     yield return new WaitForSeconds(delayBetweenMove);
                 }
+                StartCoroutine(CompleteTurn(Lunka));
             }
         }
-        if (!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount % 2 == 0)
-        {
-            // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
-            Lunka.TakenLunka = true;//Убираем чтоб добавились очки
-        }
-        yield return new WaitForSeconds(Lunka.moveTime + 0.25f);
-        Oponent.isMyTurn=true;
-        ClickedLunka.Remove();
+
     }
     //*****************************************************DELEGATE**************************************
     void HandleScoreApplied(int score)
@@ -120,7 +123,7 @@ public class S_PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(Random.Range(1, 3));
         S_Lunka Lunka = null;
-        while (true)    
+        while (true)
         {
             int index = Random.Range(0, OurLunki.Count);
             if (OurLunki[index].GetComponent<S_Lunka>().KorgoolsCount > 0)
@@ -135,5 +138,14 @@ public class S_PlayerController : MonoBehaviour
         }
     }
     //********************************************COMPLETE TURN***************************************************
-
+    IEnumerator CompleteTurn(S_Lunka Lunka)
+    {
+        if (!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount % 2 == 0)
+        {
+            // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
+            Lunka.TakenLunka = true;//Убираем чтоб добавились очки
+        }
+        yield return new WaitForSeconds(Lunka.moveTime + 0.5f);
+        Oponent.isMyTurn = true;
+    }
 }

@@ -2920,7 +2920,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isAI: 0
   isMyTurn: 1
-  delayBetweenMove: 0.35
   Oponent: {fileID: 745839139}
   layer:
     serializedVersion: 2
@@ -4294,7 +4293,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isAI: 1
   isMyTurn: 0
-  delayBetweenMove: 0.35
   Oponent: {fileID: 541400424}
   layer:
     serializedVersion: 2
@@ -11185,7 +11183,7 @@ Camera:
   far clip plane: 1000
   field of view: 54.6
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 6
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
