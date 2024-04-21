@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class S_Lunka : MonoBehaviour
 {
+
+    public Material TuzMaterial; // Ссылка на материал, который вы хотите присвоить создаваемому объекту
     public GameObject korgoolPrefab;
     public List<GameObject> Korgools;
     public bool CanBeTuz;
@@ -16,6 +18,8 @@ public class S_Lunka : MonoBehaviour
     private float zKorgoolOffset = 0.30f;
     public int index;
     public int KorgoolsCount;
+
+    public int StartKorgoolsCount = 9;
 
     [HideInInspector]
     public float moveTime = 1f;
@@ -35,7 +39,7 @@ public class S_Lunka : MonoBehaviour
     void Start()
     {
         moveTime = 0.7f;
-        SpawnObjects(9);
+        SpawnObjects(StartKorgoolsCount);
     }
 
     //*************************************ON CLICKED************************************************
@@ -132,8 +136,20 @@ public class S_Lunka : MonoBehaviour
         {
             TakingKorgools();
         }
+        else if (Tuz == true)
+        {
+            TakingKorgools();
+        }
         else
         {
+            if (KorgoolsCount == 2)
+            {
+                CanBeTuz = true;
+            }
+            else
+            {
+                CanBeTuz = false;
+            }
             StartCoroutine(RebuildKorgoolsSmoothly());
         }
     }
@@ -170,7 +186,6 @@ public class S_Lunka : MonoBehaviour
     //***************************************TAKING KORGOOLS***************************************
     public void TakingKorgools()
     {
-        Debug.Log("VYZVALSYA?");
         // Вызываем событие для передачи счета
         ScoreApplied?.Invoke(KorgoolsCount);
         for (int i = 0; i < Korgools.Count; i++)
@@ -260,4 +275,27 @@ public class S_Lunka : MonoBehaviour
         // Устанавливаем точную целевую позицию (избегаем погрешности)
         objectTransform.position = targetPosition;
     }
+
+    //*****************************************************SPAWN TUZ IN LUNKA*****************************************************
+    public void SpawnTuzInLunka()
+    {
+        Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
+        int rowCount = 3; // количество строк
+        int numberOfObjects = 1;
+        int columnCount = Mathf.CeilToInt((float)numberOfObjects / rowCount); // количество столбцов, округленное вверх
+        float middleRow = (rowCount - 1) / 2f;
+        float middleColumn = (columnCount - 1) / 2f;
+
+        GameObject newKorgool = Instantiate(korgoolPrefab, spawnPosition, Quaternion.identity);
+        // Присваиваем созданному объекту материал
+        if (TuzMaterial != null)
+        {
+            Renderer renderer = newKorgool.GetComponent<Renderer>();
+            if (renderer != null)
+            {
+                renderer.material = TuzMaterial;
+            }
+        }
+    }
+
 }

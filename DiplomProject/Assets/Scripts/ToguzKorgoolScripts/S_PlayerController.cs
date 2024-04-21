@@ -15,6 +15,7 @@ public class S_PlayerController : MonoBehaviour
     public List<GameObject> OurLunki;
     private S_Lunka ClickedLunka;
     public GameObject OurScoreLunka;
+    public bool PlayerHasTuz = false;
     void Start()
     {
         // Находим все объекты с компонентом S_Lunka на сцене
@@ -144,6 +145,14 @@ public class S_PlayerController : MonoBehaviour
         {
             // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
             Lunka.TakenLunka = true;//Убираем чтоб добавились очки
+        }
+        else if (!OurLunki.Contains(Lunka.gameObject) && Lunka.CanBeTuz == true && PlayerHasTuz == false)
+        {
+            Lunka.TakenLunka = true;//Убираем чтоб добавились очки
+            PlayerHasTuz = true;
+            Lunka.Tuz = true;
+            Lunka.CanBeTuz = false;
+            Lunka.SpawnTuzInLunka();
         }
         yield return new WaitForSeconds(Lunka.moveTime + 0.5f);
         Oponent.isMyTurn = true;

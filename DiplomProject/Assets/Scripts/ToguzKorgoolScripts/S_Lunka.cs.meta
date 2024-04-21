@@ -3,7 +3,10 @@ guid: 81d1b6f723c8a674a8a53ef6091bd165
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - TuzMaterial: {fileID: 2100000, guid: 658090be27eb95c4eb95c5ff4df101c7, type: 2}
+  - korgoolPrefab: {instanceID: 0}
+  - NextLunka: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

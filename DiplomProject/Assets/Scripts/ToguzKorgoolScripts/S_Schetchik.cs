@@ -10,6 +10,9 @@ public class S_Schetchik : MonoBehaviour
     public int score;
     
     public List<GameObject> Korgools;
+
+    private float xKorgoolOffset = 0.28f;
+    private float zKorgoolOffset = 0.28f;
     public GameObject korgoolPrefab;
 
     public void ApplyScore(int num)
@@ -22,7 +25,7 @@ public class S_Schetchik : MonoBehaviour
     void SpawnObjects(int count)
     {
         Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
-        int rowCount = 50; // количество строк
+        int rowCount = 45; // количество строк
         int numberOfObjects = count;
         int columnCount = Mathf.CeilToInt((float)numberOfObjects / rowCount); // количество столбцов, округленное вверх
         float middleRow = (rowCount - 1) / 2f;
@@ -36,8 +39,8 @@ public class S_Schetchik : MonoBehaviour
                 if (index < numberOfObjects)
                 {
                     // Вычисляем смещение относительно середины количества столбцов и строк
-                    float xOffset = (j - middleRow) * 0.25f;
-                    float zOffset = (i - middleColumn) * 0.25f;
+                    float xOffset = (j - middleRow) *xKorgoolOffset;
+                    float zOffset = (i - middleColumn) * zKorgoolOffset;
                     Vector3 randomOffset = new Vector3(xOffset, 0f, zOffset); // смещение только по оси X и Z
                     GameObject newKorgool = Instantiate(korgoolPrefab, spawnPosition + randomOffset, Quaternion.identity);
                     Korgools.Add(newKorgool);
