@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Random = UnityEngine.Random;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,16 +10,29 @@ public class S_PlayerController : MonoBehaviour
 {
     // Переменные 
     public bool isAI;
+    private bool AITurn;
     public bool isMyTurn;
     float delayBetweenMove = 0.35f;
     public S_PlayerController Oponent;
     public LayerMask layer;
     public List<GameObject> OurLunki;
     private S_Lunka ClickedLunka;
-    public GameObject OurScoreLunka;
     public bool PlayerHasTuz = false;
+    public S_Schetchik OurScoreLunka;
+    //***************************************TIMER***********************************************
+    public float turnTimeLimit = 600f; // 10 минут в секундах
+    private float turnTimer; // Текущий таймер хода
+    private bool isTurnTimerRunning; // Флаг, указывающий, что таймер хода запуще
+    public string TimerString;
+    //***************************************START***********************************************
     void Start()
     {
+        turnTimer = turnTimeLimit;
+        UpdateTimerDisplay();
+        if (isMyTurn == true)
+        {
+            StartTurnTimer();
+        }
         // Находим все объекты с компонентом S_Lunka на сцене
         S_Lunka[] allLunki = FindObjectsOfType<S_Lunka>();
         // Подписываемся на событие ScoreApplied для каждой лунки, если она не содержится в OurLunki
@@ -42,13 +57,12 @@ public class S_PlayerController : MonoBehaviour
                 ClickLunka();
             }
         }
-        else if (isMyTurn == true && isAI == true)
+        else if (isMyTurn == true && isAI == true && AITurn == true)
         {
-            isMyTurn = false;
+            AITurn = false;
             StartCoroutine(AIThinking());
         }
 
-        Debug.Log("isAI: " + isAI + ", isMyTurn: " + isMyTurn);
 
 
     }
@@ -83,6 +97,7 @@ public class S_PlayerController : MonoBehaviour
         if (ClickedLunka.KorgoolsCount == 1)//Первый возможный ход
         {
             isMyTurn = false;
+            isTurnTimerRunning = false;
             Lunka.AddKorgool(ClickedLunka.Korgools[0]);
             ClickedLunka.Remove();
             StartCoroutine(CompleteTurn(Lunka));
@@ -92,6 +107,7 @@ public class S_PlayerController : MonoBehaviour
             if (ClickedLunka.KorgoolsCount > 0)//Второй возможный ход
             {
                 isMyTurn = false;
+                isTurnTimerRunning = false;
                 int IterationCount = ClickedLunka.KorgoolsCount;
                 List<GameObject> KorgoolsToMove = new List<GameObject>(ClickedLunka.Korgools);
                 ClickedLunka.Remove();
@@ -117,12 +133,14 @@ public class S_PlayerController : MonoBehaviour
     void HandleScoreApplied(int score)
     {
         // Вызываем нужную функцию при получении счета
-        OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(score);
+        OurScoreLunka.ApplyScore(score);
     }
     //**************************************AI THINKING IMITATION********************************************
     IEnumerator AIThinking()
     {
         yield return new WaitForSeconds(Random.Range(1, 3));
+        isMyTurn = false;
+        isTurnTimerRunning = false;
         S_Lunka Lunka = null;
         while (true)
         {
@@ -143,11 +161,13 @@ public class S_PlayerController : MonoBehaviour
     {
         if (!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount % 2 == 0)
         {
+            // Останавливаем таймер хода
             // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
             Lunka.TakenLunka = true;//Убираем чтоб добавились очки
         }
         else if (!OurLunki.Contains(Lunka.gameObject) && Lunka.CanBeTuz == true && PlayerHasTuz == false)
         {
+            // Останавливаем таймер хода
             Lunka.TakenLunka = true;//Убираем чтоб добавились очки
             PlayerHasTuz = true;
             Lunka.Tuz = true;
@@ -155,6 +175,42 @@ public class S_PlayerController : MonoBehaviour
             Lunka.SpawnTuzInLunka();
         }
         yield return new WaitForSeconds(Lunka.moveTime + 0.5f);
+        if (Oponent.isAI == true)
+        {
+            Oponent.AITurn = true;
+        }
         Oponent.isMyTurn = true;
+        Oponent.isTurnTimerRunning = true;
+        Oponent.StartTurnTimer();
+        // Oponent.StartCoroutine(TurnTimer());
+    }
+    //***************************************TIMER**************************************************************
+    void StartTurnTimer()
+    {
+        isTurnTimerRunning = true;
+        StartCoroutine(TurnTimer());
+    }
+
+    IEnumerator TurnTimer()
+    {
+        while (turnTimer > 0 && isTurnTimerRunning)
+        {
+            yield return new WaitForSeconds(1f);
+            turnTimer--;
+            UpdateTimerDisplay();
+        }
+
+        // Время вышло, прерываем ход
+        // EndTurn();
+    }
+
+    void UpdateTimerDisplay()
+    {
+        // Преобразуем время в минуты и секунды
+        TimeSpan timeSpan = TimeSpan.FromSeconds(turnTimer);
+        TimerString = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+
+        // Обновляем текстовое поле
+        // timerText.text = timerString;
     }
 }
