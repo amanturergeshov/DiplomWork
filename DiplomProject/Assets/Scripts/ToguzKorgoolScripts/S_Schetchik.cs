@@ -9,20 +9,25 @@ public class S_Schetchik : MonoBehaviour
 {
     // Start is called before the first frame update
     public int score;
-    
+    public S_PlayerController OwnerPlayer;
     public List<GameObject> Korgools;
     [NonSerialized]
-    public bool isWinner=false;
+    public bool isWinner = false;
 
     private float xKorgoolOffset = 0.28f;
     private float zKorgoolOffset = 0.28f;
     public GameObject korgoolPrefab;
 
+    //********************Нужно перенести в PlayerController**********************
+    public S_GameOverScreen GameOverScreen;
+
+    //**************************************************************************
     public void ApplyScore(int num)
     {
         Clear();
         score = score + num;
         SpawnObjects(score);
+        CheckWin();
     }
 
     void SpawnObjects(int count)
@@ -42,7 +47,7 @@ public class S_Schetchik : MonoBehaviour
                 if (index < numberOfObjects)
                 {
                     // Вычисляем смещение относительно середины количества столбцов и строк
-                    float xOffset = (j - middleRow) *xKorgoolOffset;
+                    float xOffset = (j - middleRow) * xKorgoolOffset;
                     float zOffset = (i - middleColumn) * zKorgoolOffset;
                     Vector3 randomOffset = new Vector3(xOffset, 0f, zOffset); // смещение только по оси X и Z
                     GameObject newKorgool = Instantiate(korgoolPrefab, spawnPosition + randomOffset, Quaternion.identity);
@@ -54,18 +59,25 @@ public class S_Schetchik : MonoBehaviour
 
     public void Clear()
     {
-        for(int i=0; i<Korgools.Count; i++)
-            {
-                Destroy(Korgools[i]);
-            }
+        for (int i = 0; i < Korgools.Count; i++)
+        {
+            Destroy(Korgools[i]);
+        }
         Korgools.Clear();
     }
 
     public void CheckWin()
     {
-        if(score>81)
+        if (score > 81)
         {
             isWinner = true;
+            GameOverScreen.Setup(OwnerPlayer.PlayerName);
         }
+    }
+
+    //********************Нужно перенести в PlayerController**********************
+    public void GameOver()
+    {
+        // GameOverScreen.
     }
 }

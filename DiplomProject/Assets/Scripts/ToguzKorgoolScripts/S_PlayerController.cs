@@ -9,6 +9,7 @@ using UnityEngine.AI;
 public class S_PlayerController : MonoBehaviour
 {
     // Переменные 
+    public string PlayerName;
     public bool isAI;
     private bool AITurn;
     public bool isMyTurn;
@@ -94,7 +95,7 @@ public class S_PlayerController : MonoBehaviour
     IEnumerator Turn(S_Lunka ClickedLunka)
     {
         S_Lunka Lunka = ClickedLunka.NextLunka;
-        if (ClickedLunka.KorgoolsCount == 1)//Первый возможный ход
+        if (ClickedLunka.Korgools.Count == 1)//Первый возможный ход
         {
             isMyTurn = false;
             isTurnTimerRunning = false;
@@ -104,11 +105,11 @@ public class S_PlayerController : MonoBehaviour
         }
         else
         {
-            if (ClickedLunka.KorgoolsCount > 0)//Второй возможный ход
+            if (ClickedLunka.Korgools.Count > 0)//Второй возможный ход
             {
                 isMyTurn = false;
                 isTurnTimerRunning = false;
-                int IterationCount = ClickedLunka.KorgoolsCount;
+                int IterationCount = ClickedLunka.Korgools.Count;
                 List<GameObject> KorgoolsToMove = new List<GameObject>(ClickedLunka.Korgools);
                 ClickedLunka.Remove();
 
@@ -145,7 +146,7 @@ public class S_PlayerController : MonoBehaviour
         while (true)
         {
             int index = Random.Range(0, OurLunki.Count);
-            if (OurLunki[index].GetComponent<S_Lunka>().KorgoolsCount > 0)
+            if (OurLunki[index].GetComponent<S_Lunka>().Korgools.Count > 0)
             {
                 Lunka = OurLunki[index].GetComponent<S_Lunka>();
                 break;

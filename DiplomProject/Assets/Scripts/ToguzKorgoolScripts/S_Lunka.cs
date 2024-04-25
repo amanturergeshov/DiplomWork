@@ -145,7 +145,7 @@ public class S_Lunka : MonoBehaviour
         }
         else
         {
-            if (KorgoolsCount == 2)
+            if (Korgools.Count == 2)
             {
                 CanBeTuz = true;
             }
