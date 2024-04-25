@@ -159,7 +159,7 @@ public class S_PlayerController : MonoBehaviour
     //********************************************COMPLETE TURN***************************************************
     IEnumerator CompleteTurn(S_Lunka Lunka)
     {
-        if (!OurLunki.Contains(Lunka.gameObject) && Lunka.KorgoolsCount % 2 == 0)
+        if (!OurLunki.Contains(Lunka.gameObject) && Lunka.Korgools.Count % 2 == 0)
         {
             // Останавливаем таймер хода
             // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);

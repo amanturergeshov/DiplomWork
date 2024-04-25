@@ -83,6 +83,8 @@ public class S_Lunka : MonoBehaviour
     //**********************************ADD KORGOOL************************************************
     public void AddKorgool(GameObject Korgool)
     {
+        // KorgoolsCount++;
+        Korgools.Add(Korgool);
         int TempKorgoolCount = KorgoolsCount + 1;
         // KorgoolsCount = 1;
 
@@ -131,8 +133,7 @@ public class S_Lunka : MonoBehaviour
         // Устанавливаем точную целевую позицию (избегаем погрешности)
         objectTransform.position = targetPosition;
 
-        KorgoolsCount++;
-        Korgools.Add(Korgool);
+        KorgoolsCount = Korgools.Count;
 
         if (TakenLunka == true)
         {
