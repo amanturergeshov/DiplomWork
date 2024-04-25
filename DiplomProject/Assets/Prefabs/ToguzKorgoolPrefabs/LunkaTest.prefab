@@ -50,7 +50,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3655827410527736609}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -110,8 +110,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d1b6f723c8a674a8a53ef6091bd165, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  TuzMaterial: {fileID: 0}
   korgoolPrefab: {fileID: 258662870022528993, guid: 0727da15eb9a9cd4caf1e5afea65c84b, type: 3}
   Korgools: []
   CanBeTuz: 0
   Tuz: 0
   index: 0
+  KorgoolsCount: 0
+  StartKorgoolsCount: 9
+  moveTime: 1
+  TakenLunka: 0
+  NextLunka: {fileID: 0}

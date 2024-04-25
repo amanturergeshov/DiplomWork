@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -10,6 +11,8 @@ public class S_Schetchik : MonoBehaviour
     public int score;
     
     public List<GameObject> Korgools;
+    [NonSerialized]
+    public bool isWinner=false;
 
     private float xKorgoolOffset = 0.28f;
     private float zKorgoolOffset = 0.28f;
@@ -24,7 +27,7 @@ public class S_Schetchik : MonoBehaviour
 
     void SpawnObjects(int count)
     {
-        Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
+        Vector3 spawnPosition = transform.position + Vector3.up * 0.5f; // Позиция, над лункой
         int rowCount = 45; // количество строк
         int numberOfObjects = count;
         int columnCount = Mathf.CeilToInt((float)numberOfObjects / rowCount); // количество столбцов, округленное вверх
@@ -56,5 +59,13 @@ public class S_Schetchik : MonoBehaviour
                 Destroy(Korgools[i]);
             }
         Korgools.Clear();
+    }
+
+    public void CheckWin()
+    {
+        if(score>81)
+        {
+            isWinner = true;
+        }
     }
 }

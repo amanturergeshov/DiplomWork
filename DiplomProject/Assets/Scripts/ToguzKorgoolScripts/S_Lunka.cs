@@ -28,6 +28,7 @@ public class S_Lunka : MonoBehaviour
     public bool TakenLunka = false;
 
     public S_Lunka NextLunka;
+    private float SpawnHigh = 0.5f;
 
     // Делегат и событие для вызова функции ApplyScore
     public delegate void ScoreAppliedEventHandler(int score);
@@ -100,7 +101,7 @@ public class S_Lunka : MonoBehaviour
         int rowCount = 3; // Количество строк из метода SpawnObjects
         float xOffset = ((korgoolIndex % rowCount) - 1) * xKorgoolOffset; // Смещение по X, аналогично методу SpawnObjects
         float zOffset = ((korgoolIndex / rowCount) - 1) * zKorgoolOffset; // Смещение по Z, аналогично методу SpawnObjects
-        return transform.position + Vector3.up * 1.5f + new Vector3(xOffset, 0f, zOffset);
+        return transform.position + Vector3.up * SpawnHigh + new Vector3(xOffset, 0f, zOffset);
     }
     //*******************************************MOVE************************************************
     private IEnumerator MoveTowardsTarget(GameObject Korgool, Transform objectTransform, Vector3 targetPosition)
@@ -158,7 +159,7 @@ public class S_Lunka : MonoBehaviour
     //***************************************SPAWN OBJECTS************************************************
     void SpawnObjects(int count)
     {
-        Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
+        Vector3 spawnPosition = transform.position + Vector3.up * SpawnHigh; // Позиция, над лункой
         int rowCount = 3; // количество строк
         int numberOfObjects = count;
         int columnCount = Mathf.CeilToInt((float)numberOfObjects / rowCount); // количество столбцов, округленное вверх
@@ -209,7 +210,7 @@ public class S_Lunka : MonoBehaviour
         float zOffset = zKorgoolOffset;
 
         // Начальная позиция для первого коргола
-        Vector3 startPosition = transform.position + Vector3.up * 1.5f - new Vector3((rowCount - 1) * xOffset / 2f, 0f, (columnCount - 1) * zOffset / 2f);
+        Vector3 startPosition = transform.position + Vector3.up * SpawnHigh - new Vector3((rowCount - 1) * xOffset / 2f, 0f, (columnCount - 1) * zOffset / 2f);
 
         // Индекс текущего коргола
         int korgoolIndex = 0;
@@ -279,7 +280,7 @@ public class S_Lunka : MonoBehaviour
     //*****************************************************SPAWN TUZ IN LUNKA*****************************************************
     public void SpawnTuzInLunka()
     {
-        Vector3 spawnPosition = transform.position + Vector3.up * 1.5f; // Позиция, над лункой
+        Vector3 spawnPosition = transform.position + Vector3.up * SpawnHigh; // Позиция, над лункой
         int rowCount = 3; // количество строк
         int numberOfObjects = 1;
         int columnCount = Mathf.CeilToInt((float)numberOfObjects / rowCount); // количество столбцов, округленное вверх
