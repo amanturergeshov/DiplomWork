@@ -214,4 +214,9 @@ public class S_PlayerController : MonoBehaviour
         // Обновляем текстовое поле
         // timerText.text = timerString;
     }
+    public void OnGameOver()
+    { 
+        StopAllCoroutines();
+        isMyTurn = false;
+    }
 }

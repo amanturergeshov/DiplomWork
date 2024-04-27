@@ -68,16 +68,20 @@ public class S_Schetchik : MonoBehaviour
 
     public void CheckWin()
     {
-        if (score > 81)
+        if (score > 8)
         {
             isWinner = true;
-            GameOverScreen.Setup(OwnerPlayer.PlayerName);
+            GameOver();
         }
     }
 
     //********************Нужно перенести в PlayerController**********************
     public void GameOver()
     {
-        // GameOverScreen.
+        GameOverScreen.Setup(OwnerPlayer.PlayerName);
+        // OwnerPlayer.isMyTurn = false;
+        // OwnerPlayer.Oponent.isMyTurn = false;
+        OwnerPlayer.OnGameOver();
+        OwnerPlayer.Oponent.OnGameOver();
     }
 }
