@@ -24,8 +24,15 @@ public class S_UI_KorgoolsCount : MonoBehaviour
         // Проверяем, что ссылка на объект Lunka присутствует
         if (Lunka != null && korgoolsCountText != null)
         {
-            // Обновляем текстовое значение компонента текста с помощью свойства text
-            korgoolsCountText.text = Lunka.KorgoolsCount.ToString();
+            if (Lunka.Tuz == true)
+            {
+                korgoolsCountText.text = "T";
+            }
+            else
+            {
+                // Обновляем текстовое значение компонента текста с помощью свойства text
+                korgoolsCountText.text = Lunka.KorgoolsCount.ToString();
+            }
         }
         else
         {

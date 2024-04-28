@@ -13,7 +13,7 @@ public class S_Schetchik : MonoBehaviour
     public List<GameObject> Korgools;
     [NonSerialized]
     public bool isWinner = false;
-
+    public int WinScore = 81;
     private float xKorgoolOffset = 0.28f;
     private float zKorgoolOffset = 0.28f;
     public GameObject korgoolPrefab;
@@ -68,7 +68,7 @@ public class S_Schetchik : MonoBehaviour
 
     public void CheckWin()
     {
-        if (score > 8)
+        if (score > WinScore)
         {
             isWinner = true;
             GameOver();
