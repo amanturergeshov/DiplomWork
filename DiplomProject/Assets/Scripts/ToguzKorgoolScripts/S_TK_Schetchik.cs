@@ -87,7 +87,7 @@ public class S_TK_Schetchik : MonoBehaviour
     {
         // Ждем 1 секунду перед вызовом GameOverScreen.Setup()
         yield return new WaitForSeconds(1f);
-        GameOverScreen.Setup(OwnerPlayer.PlayerName);
+        GameOverScreen.Setup(OwnerPlayer.PlayerName, score);
     }
 
 }
