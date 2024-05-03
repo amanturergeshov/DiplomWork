@@ -12,11 +12,15 @@ public class S_TK_Lunka : MonoBehaviour
     public GameObject korgoolPrefab;
     public List<GameObject> Korgools;
     public bool CanBeTuz;
+
+    [HideInInspector]
     public bool Tuz;
 
     private float xKorgoolOffset = 0.30f;
     private float zKorgoolOffset = 0.30f;
     public int index;
+
+    [HideInInspector]
     public int KorgoolsCount;
 
     public int StartKorgoolsCount = 9;
@@ -29,6 +33,9 @@ public class S_TK_Lunka : MonoBehaviour
 
     public S_TK_Lunka NextLunka;
     private float SpawnHigh = 0.5f;
+
+    [HideInInspector]
+    public bool BuildTuz = false;
 
     // Делегат и событие для вызова функции ApplyScore
     public delegate void ScoreAppliedEventHandler(int score);
@@ -142,6 +149,14 @@ public class S_TK_Lunka : MonoBehaviour
         else if (Tuz == true)
         {
             TakingKorgools();
+        }
+        else if (BuildTuz == true)
+        {
+            TakingKorgools();
+            Tuz = true;
+            CanBeTuz = false;
+            BuildTuz = false;
+            SpawnTuzInLunka();
         }
         else
         {

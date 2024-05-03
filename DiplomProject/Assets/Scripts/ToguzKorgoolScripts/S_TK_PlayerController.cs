@@ -165,12 +165,8 @@ public class S_TK_PlayerController : MonoBehaviour
         }
         else if (!OurLunki.Contains(Lunka.gameObject) && Lunka.CanBeTuz == true && PlayerHasTuz == false)
         {
-            // Останавливаем таймер хода
-            Lunka.TakenLunka = true;//Убираем чтоб добавились очки
+            Lunka.BuildTuz = true;
             PlayerHasTuz = true;
-            Lunka.Tuz = true;
-            Lunka.CanBeTuz = false;
-            Lunka.SpawnTuzInLunka();
         }
         yield return new WaitForSeconds(Lunka.moveTime + 0.5f);
         if (Oponent.isAI == true)
