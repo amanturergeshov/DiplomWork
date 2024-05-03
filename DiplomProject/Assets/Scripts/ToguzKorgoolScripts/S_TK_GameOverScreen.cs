@@ -9,11 +9,12 @@ public class S_TK_GameOverScreen : MonoBehaviour
 {
     public Text PlayerNameText;
     public Text WinnerScore;
-    public void Setup(String PlayerName, int score)
+
+    public void Setup(string playerName, int score)
     {
         gameObject.SetActive(true);
-        PlayerNameText.text = PlayerName.ToUpper();
-        WinnerScore.text = "SCORE: "+ score.ToString();
+        PlayerNameText.text = playerName.ToUpper();
+        WinnerScore.text = "SCORE: " + score.ToString();
     }
 
     public void RestartButton()
@@ -24,6 +25,7 @@ public class S_TK_GameOverScreen : MonoBehaviour
 
     public void ExitButton()
     {
-        Debug.Log("MainMenu is not ready!");
+        Debug.Log("Exiting game...");
+        Application.Quit();
     }
 }
