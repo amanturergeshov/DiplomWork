@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class S_GameOverScreen : MonoBehaviour
+public class S_TK_GameOverScreen : MonoBehaviour
 {
     public Text PlayerNameText;
     public void Setup(String PlayerName)

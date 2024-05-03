@@ -5,11 +5,11 @@ using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
 
-public class S_Schetchik : MonoBehaviour
+public class S_TK_Schetchik : MonoBehaviour
 {
     // Start is called before the first frame update
     public int score;
-    public S_PlayerController OwnerPlayer;
+    public S_TK_PlayerController OwnerPlayer;
     public List<GameObject> Korgools;
     [NonSerialized]
     public bool isWinner = false;
@@ -19,7 +19,7 @@ public class S_Schetchik : MonoBehaviour
     public GameObject korgoolPrefab;
 
     //********************Нужно перенести в PlayerController**********************
-    public S_GameOverScreen GameOverScreen;
+    public S_TK_GameOverScreen GameOverScreen;
 
     //**************************************************************************
     public void ApplyScore(int num)
@@ -78,10 +78,16 @@ public class S_Schetchik : MonoBehaviour
     //********************Нужно перенести в PlayerController**********************
     public void GameOver()
     {
-        GameOverScreen.Setup(OwnerPlayer.PlayerName);
-        // OwnerPlayer.isMyTurn = false;
-        // OwnerPlayer.Oponent.isMyTurn = false;
         OwnerPlayer.OnGameOver();
         OwnerPlayer.Oponent.OnGameOver();
+        StartCoroutine(DelayBeforeGameOverScreenSetup());
     }
+
+    private IEnumerator DelayBeforeGameOverScreenSetup()
+    {
+        // Ждем 1 секунду перед вызовом GameOverScreen.Setup()
+        yield return new WaitForSeconds(1f);
+        GameOverScreen.Setup(OwnerPlayer.PlayerName);
+    }
+
 }

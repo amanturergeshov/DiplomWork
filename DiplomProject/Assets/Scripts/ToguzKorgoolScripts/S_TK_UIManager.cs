@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class S_UIManager : MonoBehaviour
+public class S_TK_UIManager : MonoBehaviour
 {
     public Text FirstPlayerScore;
     public Text SecondPlayerScore;
     public Text FirstPlayerTimer;
     public Text SecondPlayerTimer;
-    public S_PlayerController FirstPlayer;
-    public S_PlayerController SecondPlayer;
+    public S_TK_PlayerController FirstPlayer;
+    public S_TK_PlayerController SecondPlayer;
     // Start is called before the first frame update
 
     private int Score1; 

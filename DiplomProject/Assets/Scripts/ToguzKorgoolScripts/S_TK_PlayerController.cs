@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class S_PlayerController : MonoBehaviour
+public class S_TK_PlayerController : MonoBehaviour
 {
     // Переменные 
     public string PlayerName;
@@ -14,12 +14,12 @@ public class S_PlayerController : MonoBehaviour
     private bool AITurn;
     public bool isMyTurn;
     float delayBetweenMove = 0.35f;
-    public S_PlayerController Oponent;
+    public S_TK_PlayerController Oponent;
     public LayerMask layer;
     public List<GameObject> OurLunki;
-    private S_Lunka ClickedLunka;
+    private S_TK_Lunka ClickedLunka;
     public bool PlayerHasTuz = false;
-    public S_Schetchik OurScoreLunka;
+    public S_TK_Schetchik OurScoreLunka;
     //***************************************TIMER***********************************************
     public float turnTimeLimit = 600f; // 10 минут в секундах
     private float turnTimer; // Текущий таймер хода
@@ -35,9 +35,9 @@ public class S_PlayerController : MonoBehaviour
             StartTurnTimer();
         }
         // Находим все объекты с компонентом S_Lunka на сцене
-        S_Lunka[] allLunki = FindObjectsOfType<S_Lunka>();
+        S_TK_Lunka[] allLunki = FindObjectsOfType<S_TK_Lunka>();
         // Подписываемся на событие ScoreApplied для каждой лунки, если она не содержится в OurLunki
-        foreach (S_Lunka lunka in allLunki)
+        foreach (S_TK_Lunka lunka in allLunki)
         {
             if (!OurLunki.Contains(lunka.gameObject))
             {
@@ -79,7 +79,7 @@ public class S_PlayerController : MonoBehaviour
 
             if (hitObject != null && OurLunki.Contains(hitObject))
             {
-                ClickedLunka = hitObject.GetComponent<S_Lunka>();
+                ClickedLunka = hitObject.GetComponent<S_TK_Lunka>();
                 StartCoroutine(Turn(ClickedLunka));
             }
             else
@@ -89,12 +89,10 @@ public class S_PlayerController : MonoBehaviour
             }
         }
     }
-    /// <summary>
-    /// TURN MOVE
-    /// </summary>
-    IEnumerator Turn(S_Lunka ClickedLunka)
+    //*************************************************TURN MOVE*********************************************
+    IEnumerator Turn(S_TK_Lunka ClickedLunka)
     {
-        S_Lunka Lunka = ClickedLunka.NextLunka;
+        S_TK_Lunka Lunka = ClickedLunka.NextLunka;
         if (ClickedLunka.Korgools.Count == 1)//Первый возможный ход
         {
             isMyTurn = false;
@@ -142,13 +140,13 @@ public class S_PlayerController : MonoBehaviour
         yield return new WaitForSeconds(Random.Range(1, 3));
         isMyTurn = false;
         isTurnTimerRunning = false;
-        S_Lunka Lunka = null;
+        S_TK_Lunka Lunka = null;
         while (true)
         {
             int index = Random.Range(0, OurLunki.Count);
-            if (OurLunki[index].GetComponent<S_Lunka>().Korgools.Count > 0)
+            if (OurLunki[index].GetComponent<S_TK_Lunka>().Korgools.Count > 0)
             {
-                Lunka = OurLunki[index].GetComponent<S_Lunka>();
+                Lunka = OurLunki[index].GetComponent<S_TK_Lunka>();
                 break;
             }
         }
@@ -158,12 +156,11 @@ public class S_PlayerController : MonoBehaviour
         }
     }
     //********************************************COMPLETE TURN***************************************************
-    IEnumerator CompleteTurn(S_Lunka Lunka)
+    IEnumerator CompleteTurn(S_TK_Lunka Lunka)
     {
         if (!OurLunki.Contains(Lunka.gameObject) && Lunka.Korgools.Count % 2 == 0)
         {
             // Останавливаем таймер хода
-            // OurScoreLunka.GetComponent<S_Schetchik>().ApplyScore(Lunka.KorgoolsCount);
             Lunka.TakenLunka = true;//Убираем чтоб добавились очки
         }
         else if (!OurLunki.Contains(Lunka.gameObject) && Lunka.CanBeTuz == true && PlayerHasTuz == false)
@@ -180,10 +177,16 @@ public class S_PlayerController : MonoBehaviour
         {
             Oponent.AITurn = true;
         }
-        Oponent.isMyTurn = true;
-        Oponent.isTurnTimerRunning = true;
-        Oponent.StartTurnTimer();
-        // Oponent.StartCoroutine(TurnTimer());
+        if (Oponent.CheckTurnPossible() == true)
+        {
+            Oponent.isMyTurn = true;
+            Oponent.isTurnTimerRunning = true;
+            Oponent.StartTurnTimer();
+        }
+        else
+        {
+            OurScoreLunka.GameOver();
+        }
     }
     //***************************************TIMER**************************************************************
     void StartTurnTimer()
@@ -200,9 +203,6 @@ public class S_PlayerController : MonoBehaviour
             turnTimer--;
             UpdateTimerDisplay();
         }
-
-        // Время вышло, прерываем ход
-        // EndTurn();
     }
 
     void UpdateTimerDisplay()
@@ -210,13 +210,22 @@ public class S_PlayerController : MonoBehaviour
         // Преобразуем время в минуты и секунды
         TimeSpan timeSpan = TimeSpan.FromSeconds(turnTimer);
         TimerString = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
-
-        // Обновляем текстовое поле
-        // timerText.text = timerString;
     }
     public void OnGameOver()
-    { 
+    {
         StopAllCoroutines();
         isMyTurn = false;
+    }
+    public bool CheckTurnPossible()
+    {
+        foreach (GameObject lunkaObject in OurLunki)
+        {
+            S_TK_Lunka lunka = lunkaObject.GetComponent<S_TK_Lunka>();
+            if (lunka.Korgools.Count != 0)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

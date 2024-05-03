@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class S_UI_KorgoolsCount : MonoBehaviour
+public class S_TK_UI_KorgoolsCount : MonoBehaviour
 {
-    public S_Lunka Lunka;
+    public S_TK_Lunka Lunka;
     public Text korgoolsCountText; // ссылка на компонент текста
 
     // Start is called before the first frame update

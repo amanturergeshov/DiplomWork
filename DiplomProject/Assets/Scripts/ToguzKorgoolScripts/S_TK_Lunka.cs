@@ -5,7 +5,7 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class S_Lunka : MonoBehaviour
+public class S_TK_Lunka : MonoBehaviour
 {
 
     public Material TuzMaterial; // Ссылка на материал, который вы хотите присвоить создаваемому объекту
@@ -27,7 +27,7 @@ public class S_Lunka : MonoBehaviour
 
     public bool TakenLunka = false;
 
-    public S_Lunka NextLunka;
+    public S_TK_Lunka NextLunka;
     private float SpawnHigh = 0.5f;
 
     // Делегат и событие для вызова функции ApplyScore
