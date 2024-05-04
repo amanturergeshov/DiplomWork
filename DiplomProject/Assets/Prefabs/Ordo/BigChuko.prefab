@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1230048344669613320}
   - component: {fileID: 1230048344669613321}
   - component: {fileID: 1230048344669613326}
-  m_Layer: 0
+  - component: {fileID: 5491500390325595816}
+  m_Layer: 3
   m_Name: BigChuko
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,3 +115,19 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &5491500390325595816
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1230048344669613327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 35f749c2561022d479d60f326a6ca912, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layer:
+    serializedVersion: 2
+    m_Bits: 0
+  Tompoy: {fileID: 0}

@@ -182,6 +182,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BigChuko
       objectReference: {fileID: 0}
+    - target: {fileID: 5491500390325595816, guid: d817dc13905b15446a05b25de65c48e4, type: 3}
+      propertyPath: Tompoy
+      value: 
+      objectReference: {fileID: 350409598}
+    - target: {fileID: 5491500390325595816, guid: d817dc13905b15446a05b25de65c48e4, type: 3}
+      propertyPath: layer.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d817dc13905b15446a05b25de65c48e4, type: 3}
 --- !u!1 &203844586
@@ -356,6 +364,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8269496d0f7d0584db7266dbc13f5774, type: 3}
+--- !u!1 &350409598 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1230048344669613327, guid: d817dc13905b15446a05b25de65c48e4, type: 3}
+  m_PrefabInstance: {fileID: 171693311}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &537176154
 GameObject:
   m_ObjectHideFlags: 0
