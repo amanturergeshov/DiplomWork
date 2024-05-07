@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class S_O_PLayerController : MonoBehaviour
@@ -10,20 +12,25 @@ public class S_O_PLayerController : MonoBehaviour
     public Vector3 MouseClickPosition;
     public Vector3 LaunchVector;
     private bool TompoyClicked = false;
+    private float ImpulseForce = 0;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+
+        if (TompoyClicked == false)
         {
-            if (TompoyClicked == false)
+            if (Input.GetMouseButtonDown(0))
             {
                 StartRay();
             }
         }
-        if (Input.GetMouseButtonUp(0) && TompoyClicked == true)
+        else
         {
             SetLaunchVector();
-            LaunchTompoy();
+            if (Input.GetMouseButtonUp(0))
+            {
+                LaunchTompoy();
+            }
         }
     }
 
@@ -46,28 +53,42 @@ public class S_O_PLayerController : MonoBehaviour
         }
     }
 
+    Vector3 TempPos;
     void SetLaunchVector()
     {
         float xCoordinates = (MouseClickPosition - Input.mousePosition).x;
         float yCoordinates = (MouseClickPosition - Input.mousePosition).y;
         float tempX = (xCoordinates / Screen.width);
         float tempZ = (yCoordinates / Screen.height);
-        Vector3 TempPos = new Vector3(tempX, 0, tempZ);
+        TempPos = new Vector3(xCoordinates, 0, yCoordinates);
+
+        ImpulseForce = Math.Clamp(((Vector3.Distance(MouseClickPosition, Input.mousePosition))/3), 10f, 100f);
+        Debug.Log(ImpulseForce);
 
         LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
+        // Debug.Log($"Vector: {LaunchVector}");
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(Tompoy.transform.position, LaunchVector * ImpulseForce);
     }
 
     void LaunchTompoy()
     {
-        Rigidbody rb = Tompoy.GetComponent<Rigidbody>();
-        if (rb != null)
+        if (TompoyClicked == true)
         {
-            rb.AddForce(LaunchVector * 35, ForceMode.VelocityChange);
+            Rigidbody rb = Tompoy.GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                rb.AddForce(LaunchVector * ImpulseForce, ForceMode.Impulse);
+                TompoyClicked = false;
+            }
+            else
+            {
+                Debug.LogError("Rigidbody component not found on Tompoy object.");
+            }
         }
-        else
-        {
-            Debug.LogError("Rigidbody component not found on Tompoy object.");
-        }
-        TompoyClicked = false;
     }
 }
