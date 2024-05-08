@@ -13,7 +13,19 @@ public class S_O_PLayerController : MonoBehaviour
     public Vector3 LaunchVector;
     private bool TompoyClicked = false;
     private float ImpulseForce = 0;
+    public float CameraRotationSpeed;
 
+    public bool rotatingRight;
+    public bool rotatingLeft;
+
+    public LayerMask layerForLaunch;
+
+    private Vector3 CameraHitPosition;
+    private Camera mainCamera;
+    private void Start()
+    {
+        mainCamera = Camera.main;
+    }
     void Update()
     {
 
@@ -32,8 +44,41 @@ public class S_O_PLayerController : MonoBehaviour
                 LaunchTompoy();
             }
         }
+        CameraRotate();
+
     }
 
+    void CameraRotate()
+    { // Вращение камеры в зависимости от нажатой клавиши
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            rotatingRight = true;
+        }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            rotatingLeft = true;
+        }
+
+        // Остановка вращения камеры при отпускании клавиши
+        if (Input.GetKeyUp(KeyCode.E))
+        {
+            rotatingRight = false;
+        }
+        else if (Input.GetKeyUp(KeyCode.Q))
+        {
+            rotatingLeft = false;
+        }
+
+        // Вращение камеры вокруг объекта
+        if (rotatingRight)
+        {
+            transform.Rotate(0, CameraRotationSpeed * Time.deltaTime, 0);
+        }
+        else if (rotatingLeft)
+        {
+            transform.Rotate(0, -CameraRotationSpeed * Time.deltaTime, 0);
+        }
+    }
     void StartRay()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -43,6 +88,7 @@ public class S_O_PLayerController : MonoBehaviour
             GameObject hitObject = hit.collider.gameObject;
             if (hitObject == Tompoy)
             {
+                // MouseClickPosition = Input.mousePosition;
                 MouseClickPosition = Input.mousePosition;
                 TompoyClicked = true;
             }
@@ -53,28 +99,34 @@ public class S_O_PLayerController : MonoBehaviour
         }
     }
 
-    Vector3 TempPos;
     void SetLaunchVector()
     {
-        float xCoordinates = (MouseClickPosition - Input.mousePosition).x;
-        float yCoordinates = (MouseClickPosition - Input.mousePosition).y;
-        float tempX = (xCoordinates / Screen.width);
-        float tempZ = (yCoordinates / Screen.height);
-        TempPos = new Vector3(xCoordinates, 0, yCoordinates);
 
-        ImpulseForce = Math.Clamp(((Vector3.Distance(MouseClickPosition, Input.mousePosition))/3), 10f, 100f);
-        Debug.Log(ImpulseForce);
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 10000f, layerForLaunch))
+        {
+            CameraHitPosition = hit.point;
+            Vector3 TestPos = (Tompoy.transform.position - CameraHitPosition);
+            Vector3 TempPos = TestPos;
 
-        LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
-        // Debug.Log($"Vector: {LaunchVector}");
+            ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition))*30), 10f, 100f);
+            Debug.Log(ImpulseForce);
+
+            LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
+            // Debug.Log($"Vector: {LaunchVector}");
+
+            // Debug.Log($"Vector: {TempPos.normalized * ImpulseForce}");
+        }
+
     }
 
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawLine(Tompoy.transform.position, LaunchVector * ImpulseForce);
+        Gizmos.DrawLine(Tompoy.transform.position, Tompoy.transform.position + LaunchVector * ImpulseForce);
+        Gizmos.DrawWireSphere(CameraHitPosition, 1f);
     }
-
     void LaunchTompoy()
     {
         if (TompoyClicked == true)
