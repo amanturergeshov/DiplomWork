@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 1230048344669613326}
   - component: {fileID: 5491500390325595816}
   m_Layer: 3
-  m_Name: BigChuko
+  m_Name: Tompoy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

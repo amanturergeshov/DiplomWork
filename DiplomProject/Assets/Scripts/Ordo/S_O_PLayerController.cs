@@ -6,27 +6,61 @@ using UnityEngine;
 
 public class S_O_PLayerController : MonoBehaviour
 {
+    //************************************************************************PRIMITIVE AI PROPERTIES*********************************************
+    private bool AITurn;
+    public bool isAI;
+    //********************************************************************PLAYER PROPERTIES************************************************
+    public string PlayerName;
+    public bool isMyTurn;
+    public S_O_PLayerController Oponent;
+    //**********************************************************************TOMPOY CONTROL PROPERTIES*******************************************************
     public LayerMask layer;
+    public LayerMask layerForLaunch;
     public GameObject Tompoy;
-
     public Vector3 MouseClickPosition;
     public Vector3 LaunchVector;
     private bool TompoyClicked = false;
     private float ImpulseForce = 0;
+    public List<GameObject> alchikObjects = new List<GameObject>();
+
+    //**********************************************************************CAMERA PROPERTIES*******************************************************
     public float CameraRotationSpeed;
 
-    public bool rotatingRight;
-    public bool rotatingLeft;
+    private bool rotatingRight;
+    private bool rotatingLeft;
 
-    public LayerMask layerForLaunch;
 
     private Vector3 CameraHitPosition;
     private Camera mainCamera;
+    //**********************************************************************START*******************************************************
     private void Start()
     {
+
         mainCamera = Camera.main;
+
+        //Запоминаем все альчики на сцене
+        GameObject[] alchikArray = GameObject.FindGameObjectsWithTag("Alchik");
+        foreach (GameObject obj in alchikArray)
+        {
+            alchikObjects.Add(obj);
+        }
     }
+    //**********************************************************************UPDATE*******************************************************
     void Update()
+    {
+        if (isAI == true && isMyTurn == true)
+        {
+            isMyTurn = false;
+            StartCoroutine(LaunchTompoyTowardsRandomAlchik());
+        }
+        if (isAI == false && isMyTurn == true)
+        {
+            PlayerTurn();
+        }
+        CameraRotate();
+    }
+    //******************************************************************PLAYER TURN*************************************************************
+    void PlayerTurn()
     {
 
         if (TompoyClicked == false)
@@ -41,15 +75,14 @@ public class S_O_PLayerController : MonoBehaviour
             SetLaunchVector();
             if (Input.GetMouseButtonUp(0))
             {
-                LaunchTompoy();
+                StartCoroutine(LaunchTompoy());
             }
         }
-        CameraRotate();
-
     }
 
+    //**********************************************************************CAMERA ROTATE*******************************************************
     void CameraRotate()
-    { // Вращение камеры в зависимости от нажатой клавиши
+    {
         if (Input.GetKeyDown(KeyCode.E))
         {
             rotatingRight = true;
@@ -59,7 +92,6 @@ public class S_O_PLayerController : MonoBehaviour
             rotatingLeft = true;
         }
 
-        // Остановка вращения камеры при отпускании клавиши
         if (Input.GetKeyUp(KeyCode.E))
         {
             rotatingRight = false;
@@ -68,8 +100,6 @@ public class S_O_PLayerController : MonoBehaviour
         {
             rotatingLeft = false;
         }
-
-        // Вращение камеры вокруг объекта
         if (rotatingRight)
         {
             transform.Rotate(0, CameraRotationSpeed * Time.deltaTime, 0);
@@ -79,6 +109,8 @@ public class S_O_PLayerController : MonoBehaviour
             transform.Rotate(0, -CameraRotationSpeed * Time.deltaTime, 0);
         }
     }
+
+    //**********************************************************************START RAY*******************************************************
     void StartRay()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -88,7 +120,6 @@ public class S_O_PLayerController : MonoBehaviour
             GameObject hitObject = hit.collider.gameObject;
             if (hitObject == Tompoy)
             {
-                // MouseClickPosition = Input.mousePosition;
                 MouseClickPosition = Input.mousePosition;
                 TompoyClicked = true;
             }
@@ -99,6 +130,7 @@ public class S_O_PLayerController : MonoBehaviour
         }
     }
 
+    //**********************************************************************SET LAUCH VECTOR*******************************************************
     void SetLaunchVector()
     {
 
@@ -110,8 +142,8 @@ public class S_O_PLayerController : MonoBehaviour
             Vector3 TestPos = (Tompoy.transform.position - CameraHitPosition);
             Vector3 TempPos = TestPos;
 
-            ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition))*30), 10f, 100f);
-            Debug.Log(ImpulseForce);
+            ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition)) * 30), 10f, 100f);
+            // Debug.Log(ImpulseForce);
 
             LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
             // Debug.Log($"Vector: {LaunchVector}");
@@ -121,26 +153,61 @@ public class S_O_PLayerController : MonoBehaviour
 
     }
 
+    //**********************************************************************DEBUG GIZMO*******************************************************
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawLine(Tompoy.transform.position, Tompoy.transform.position + LaunchVector * ImpulseForce);
         Gizmos.DrawWireSphere(CameraHitPosition, 1f);
     }
-    void LaunchTompoy()
+
+    //**********************************************************************LAUNCH TOMPOY*******************************************************
+    IEnumerator LaunchTompoy()
     {
-        if (TompoyClicked == true)
+        Rigidbody rb = Tompoy.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            Rigidbody rb = Tompoy.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.AddForce(LaunchVector * ImpulseForce, ForceMode.Impulse);
-                TompoyClicked = false;
-            }
-            else
-            {
-                Debug.LogError("Rigidbody component not found on Tompoy object.");
-            }
+            rb.AddForce(LaunchVector * ImpulseForce, ForceMode.Impulse);
+            TompoyClicked = false;
+
+            isMyTurn = false;
+
+            yield return new WaitForSeconds(1f);
+
+            Oponent.isMyTurn = true;
+        }
+        else
+        {
+            Debug.LogError("Rigidbody component not found on Tompoy object.");
+        }
+
+    }
+
+    //***********************************************************************AI LAUCH**********************************************************************
+    IEnumerator LaunchTompoyTowardsRandomAlchik()
+    {
+        if (alchikObjects.Count > 0)
+        {
+            ImpulseForce = 80;
+            // Choose a random alchik object
+            GameObject randomAlchik = alchikObjects[UnityEngine.Random.Range(0, alchikObjects.Count)];
+
+            // Calculate launch vector towards the random alchik
+            Vector3 direction = randomAlchik.transform.position - Tompoy.transform.position;
+            LaunchVector = direction.normalized;
+
+            // Add a random delay between 2 to 3 seconds
+            float delay = UnityEngine.Random.Range(2f, 3f);
+            yield return new WaitForSeconds(delay);
+
+            // Launch Tompoy after the delay
+            StartCoroutine(LaunchTompoy());
+            Oponent.isMyTurn = true;
+        }
+        else
+        {
+            Debug.LogWarning("No alchik objects found.");
         }
     }
+
 }
