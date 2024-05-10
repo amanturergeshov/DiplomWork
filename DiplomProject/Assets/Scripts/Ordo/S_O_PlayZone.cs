@@ -22,6 +22,11 @@ public class S_O_PlayZone : MonoBehaviour
             foreach (var player in Players)
             {
                 player.OnTurnChange += SetActivePlayer;
+
+                if (player.isMyTurn == true)
+                {
+                    SetActivePlayer(player);
+                }
             }
         }
     }
@@ -39,16 +44,15 @@ public class S_O_PlayZone : MonoBehaviour
 
     IEnumerator RemoveChuko(GameObject Chuko)
     {
-        ActivePlayer.OurScore.AddScore();
+        if (ActivePlayer)
+        {
+            ActivePlayer.OurScore.AddScore();
+        }
         InsideAlchikObjects.Remove(Chuko);
-
-        // Проверяем, есть ли игроки в списке
         if (Players.Count > 0)
         {
-            // Обходим каждого игрока
             foreach (var player in Players)
             {
-                // Устанавливаем список alchikObjects для каждого игрока равным InsideAlchikObjects
                 player.alchikObjects = InsideAlchikObjects;
             }
         }

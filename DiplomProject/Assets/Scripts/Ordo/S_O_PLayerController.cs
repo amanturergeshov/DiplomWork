@@ -23,6 +23,8 @@ public class S_O_PLayerController : MonoBehaviour
     public Vector3 LaunchVector;
     private bool TompoyClicked = false;
     private float ImpulseForce = 0;
+
+    private float lastClickTime = 0f;
     public List<GameObject> alchikObjects = new List<GameObject>();
 
     //**********************************************************************CAMERA PROPERTIES*******************************************************
@@ -41,7 +43,7 @@ public class S_O_PLayerController : MonoBehaviour
     //**********************************************************************START*******************************************************
     private void Start()
     {
-        if(isMyTurn==false)
+        if (isMyTurn == false)
         {
             GiveTurnToOponent();
         }
@@ -75,9 +77,19 @@ public class S_O_PLayerController : MonoBehaviour
 
         if (TompoyClicked == false)
         {
+            // Проверяем двойной клик
             if (Input.GetMouseButtonDown(0))
             {
-                StartRay();
+                
+                if (Time.time - lastClickTime < 0.2f) // Проверяем временной интервал между кликами (0.2 секунды)
+                {
+                    MoveTompoyToMousePosition(); // Если интервал между кликами мал, перемещаем Томпоя
+                }
+                else
+                {
+                    StartRay(); // Если не двойной клик, запускаем обычную логику
+                }
+                lastClickTime = Time.time; // Сохраняем время последнего клика
             }
         }
         else
@@ -221,10 +233,21 @@ public class S_O_PLayerController : MonoBehaviour
             Debug.LogWarning("No alchik objects found.");
         }
     }
-
+    //**************************************************************************RELOCATE TOMPOY***********************************************
     public void ReLocateTompoy()
     {
         Tompoy.transform.position = MouseClickPosition;
+    }
+    //**************************************************************************RELOCATE TOMPOY***********************************************
+    void MoveTompoyToMousePosition()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit, 10000f, layerForLaunch))
+        {
+            MouseClickPosition = hit.point;
+            Tompoy.transform.position = MouseClickPosition; // Перемещаем Томпоя в точку клика
+        }
     }
 
     public void GiveTurnToOponent()
