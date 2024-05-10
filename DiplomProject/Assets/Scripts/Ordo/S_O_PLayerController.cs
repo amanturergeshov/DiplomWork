@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SocialPlatforms.Impl;
 
 public class S_O_PLayerController : MonoBehaviour
 {
@@ -12,6 +13,7 @@ public class S_O_PLayerController : MonoBehaviour
     //********************************************************************PLAYER PROPERTIES************************************************
     public string PlayerName;
     public bool isMyTurn;
+    public S_O_Score OurScore;
     public S_O_PLayerController Oponent;
     //**********************************************************************TOMPOY CONTROL PROPERTIES*******************************************************
     public LayerMask layer;
@@ -32,9 +34,17 @@ public class S_O_PLayerController : MonoBehaviour
 
     private Vector3 CameraHitPosition;
     private Camera mainCamera;
+    //************************************************************************DELEGATES*************************************************************
+    public delegate void TurnChangeEvent(S_O_PLayerController newActivePlayer);
+    public event TurnChangeEvent OnTurnChange;
+
     //**********************************************************************START*******************************************************
     private void Start()
     {
+        if(isMyTurn==false)
+        {
+            GiveTurnToOponent();
+        }
 
         mainCamera = Camera.main;
 
@@ -120,7 +130,7 @@ public class S_O_PLayerController : MonoBehaviour
             GameObject hitObject = hit.collider.gameObject;
             if (hitObject == Tompoy)
             {
-                MouseClickPosition = Input.mousePosition;
+                MouseClickPosition = Tompoy.transform.position;
                 TompoyClicked = true;
             }
             else
@@ -172,9 +182,11 @@ public class S_O_PLayerController : MonoBehaviour
 
             isMyTurn = false;
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(2f);
+            GiveTurnToOponent();
+            yield return new WaitForSeconds(1.5f);
+            ReLocateTompoy();
 
-            Oponent.isMyTurn = true;
         }
         else
         {
@@ -202,12 +214,25 @@ public class S_O_PLayerController : MonoBehaviour
 
             // Launch Tompoy after the delay
             StartCoroutine(LaunchTompoy());
-            Oponent.isMyTurn = true;
+            // GiveTurnToOponent();
         }
         else
         {
             Debug.LogWarning("No alchik objects found.");
         }
+    }
+
+    public void ReLocateTompoy()
+    {
+        Tompoy.transform.position = MouseClickPosition;
+    }
+
+    public void GiveTurnToOponent()
+    {
+        Oponent.isMyTurn = true;
+
+
+        OnTurnChange?.Invoke(Oponent);
     }
 
 }

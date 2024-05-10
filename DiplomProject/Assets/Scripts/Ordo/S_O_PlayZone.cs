@@ -1,0 +1,64 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class S_O_PlayZone : MonoBehaviour
+{
+    public List<GameObject> InsideAlchikObjects = new List<GameObject>();
+    public List<S_O_PLayerController> Players;
+
+    public S_O_PLayerController ActivePlayer;
+    void Start()
+    {
+        GameObject[] alchikArray = GameObject.FindGameObjectsWithTag("Alchik");
+        foreach (GameObject obj in alchikArray)
+        {
+            InsideAlchikObjects.Add(obj);
+        }
+
+        if (Players.Count > 0)
+        {
+            // Подписываем метод SetActivePlayer на событие OnTurnChange каждого игрока
+            foreach (var player in Players)
+            {
+                player.OnTurnChange += SetActivePlayer;
+            }
+        }
+    }
+    void OnTriggerExit(Collider other)
+    {
+        if (InsideAlchikObjects.Contains(other.gameObject))
+        {
+            StartCoroutine(RemoveChuko(other.gameObject));
+        }
+    }
+    void OnTriggerEnter(Collider other)
+    {
+        print("Entering" + other.gameObject.name);
+    }
+
+    IEnumerator RemoveChuko(GameObject Chuko)
+    {
+        ActivePlayer.OurScore.AddScore();
+        InsideAlchikObjects.Remove(Chuko);
+
+        // Проверяем, есть ли игроки в списке
+        if (Players.Count > 0)
+        {
+            // Обходим каждого игрока
+            foreach (var player in Players)
+            {
+                // Устанавливаем список alchikObjects для каждого игрока равным InsideAlchikObjects
+                player.alchikObjects = InsideAlchikObjects;
+            }
+        }
+
+        yield return new WaitForSeconds(2f);
+        Destroy(Chuko);
+    }
+
+    public void SetActivePlayer(S_O_PLayerController newActivePlayer)
+    {
+        ActivePlayer = newActivePlayer;
+    }
+}
