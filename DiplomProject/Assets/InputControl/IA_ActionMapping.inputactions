@@ -1,0 +1,91 @@
+{
+    "name": "IA_ActionMapping",
+    "maps": [
+        {
+            "name": "Player",
+            "id": "2bb48844-1d4c-442c-a3fc-a60bf47cb832",
+            "actions": [
+                {
+                    "name": "OnTapLMB",
+                    "type": "Button",
+                    "id": "d2d62e07-6769-49fc-aae0-e0f54c67aa10",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "OnReleaseLMB",
+                    "type": "Button",
+                    "id": "d0fe7b4c-123d-4b8f-bbc5-43417f5d02a8",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press(behavior=1)",
+                    "initialStateCheck": true
+                },
+                {
+                    "name": "OnPressLMB",
+                    "type": "Button",
+                    "id": "cd97899f-f9b7-4b37-9b2f-75f1a2b8f903",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Press",
+                    "initialStateCheck": true
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "9a4a5f12-5cc2-4f0c-9507-a9aa845ad8f3",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "New control scheme",
+                    "action": "OnTapLMB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "f16f91aa-4182-4f47-857b-ad98e444635b",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "New control scheme",
+                    "action": "OnReleaseLMB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "fa9b7a0d-b885-4023-85f7-cda99098eabf",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "New control scheme",
+                    "action": "OnPressLMB",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "New control scheme",
+            "bindingGroup": "New control scheme",
+            "devices": [
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}

@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.SocialPlatforms.Impl;
 
-public class S_O_PLayerController : MonoBehaviour
+public class S_O_PLayerController_Old : MonoBehaviour
 {
     //************************************************************************PRIMITIVE AI PROPERTIES*********************************************
+    private bool AITurn;
     public bool isAI;
     //********************************************************************PLAYER PROPERTIES************************************************
     public string PlayerName;
@@ -22,6 +23,8 @@ public class S_O_PLayerController : MonoBehaviour
     public Vector3 LaunchVector;
     private bool TompoyClicked = false;
     private float ImpulseForce = 0;
+
+    private float lastClickTime = 0f;
     public List<GameObject> alchikObjects = new List<GameObject>();
 
     //**********************************************************************CAMERA PROPERTIES*******************************************************
@@ -29,6 +32,8 @@ public class S_O_PLayerController : MonoBehaviour
 
     private bool rotatingRight;
     private bool rotatingLeft;
+
+
     private Vector3 CameraHitPosition;
     private Camera mainCamera;
     //************************************************************************DELEGATES*************************************************************
@@ -60,13 +65,42 @@ public class S_O_PLayerController : MonoBehaviour
             isMyTurn = false;
             StartCoroutine(LaunchTompoyTowardsRandomAlchik());
         }
-        if (isAI == false && isMyTurn == true && TompoyClicked == true)
+        if (isAI == false && isMyTurn == true)
         {
-            SetLaunchVector();
+            PlayerTurn();
         }
         CameraRotate();
     }
+    //******************************************************************PLAYER TURN*************************************************************
+    void PlayerTurn()
+    {
 
+        if (TompoyClicked == false)
+        {
+            // Проверяем двойной клик
+            if (Input.GetMouseButtonDown(0))
+            {
+                
+                if (Time.time - lastClickTime < 0.2f) // Проверяем временной интервал между кликами (0.2 секунды)
+                {
+                    MoveTompoyToMousePosition(); // Если интервал между кликами мал, перемещаем Томпоя
+                }
+                else
+                {
+                    StartRay(); // Если не двойной клик, запускаем обычную логику
+                }
+                lastClickTime = Time.time; // Сохраняем время последнего клика
+            }
+        }
+        else
+        {
+            SetLaunchVector();
+            if (Input.GetMouseButtonUp(0))
+            {
+                StartCoroutine(LaunchTompoy());
+            }
+        }
+    }
 
     //**********************************************************************CAMERA ROTATE*******************************************************
     void CameraRotate()
@@ -130,9 +164,13 @@ public class S_O_PLayerController : MonoBehaviour
             Vector3 TestPos = (Tompoy.transform.position - CameraHitPosition);
             Vector3 TempPos = TestPos;
 
-            ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition)) * 50), 1f, 100f);
+            ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition)) * 30), 10f, 100f);
+            // Debug.Log(ImpulseForce);
 
             LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
+            // Debug.Log($"Vector: {LaunchVector}");
+
+            // Debug.Log($"Vector: {TempPos.normalized * ImpulseForce}");
         }
 
     }
@@ -158,7 +196,6 @@ public class S_O_PLayerController : MonoBehaviour
 
             yield return new WaitForSeconds(2f);
             GiveTurnToOponent();
-            // isMyTurn = true;
             yield return new WaitForSeconds(1.5f);
             ReLocateTompoy();
 
@@ -176,15 +213,20 @@ public class S_O_PLayerController : MonoBehaviour
         if (alchikObjects.Count > 0)
         {
             ImpulseForce = 80;
+            // Choose a random alchik object
             GameObject randomAlchik = alchikObjects[UnityEngine.Random.Range(0, alchikObjects.Count)];
 
+            // Calculate launch vector towards the random alchik
             Vector3 direction = randomAlchik.transform.position - Tompoy.transform.position;
             LaunchVector = direction.normalized;
 
+            // Add a random delay between 2 to 3 seconds
             float delay = UnityEngine.Random.Range(2f, 3f);
             yield return new WaitForSeconds(delay);
 
+            // Launch Tompoy after the delay
             StartCoroutine(LaunchTompoy());
+            // GiveTurnToOponent();
         }
         else
         {
@@ -194,16 +236,7 @@ public class S_O_PLayerController : MonoBehaviour
     //**************************************************************************RELOCATE TOMPOY***********************************************
     public void ReLocateTompoy()
     {
-        Vector3 playZoneCenter = new Vector3(0, 0, 0);
-
-        float moveRadius = 5f;
-
-        Vector2 randomPoint = UnityEngine.Random.insideUnitCircle.normalized * moveRadius;
-
-        Vector3 newPosition = playZoneCenter + new Vector3(randomPoint.x, 0f, randomPoint.y);
-
-        Tompoy.transform.position = newPosition;
-
+        Tompoy.transform.position = MouseClickPosition;
     }
     //**************************************************************************RELOCATE TOMPOY***********************************************
     void MoveTompoyToMousePosition()
@@ -212,19 +245,8 @@ public class S_O_PLayerController : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit, 10000f, layerForLaunch))
         {
-            // Проверяем, есть ли на объекте скрипт S_O_PlayerZone
-            S_O_PlayZone playerZoneScript = hit.collider.GetComponent<S_O_PlayZone>();
-            if (playerZoneScript == null)
-            {
-                // Если скрипта нет, перемещаем томпоя в точку клика
-                MouseClickPosition = hit.point;
-                Tompoy.transform.position = MouseClickPosition;
-            }
-            else
-            {
-                // Если есть, не перемещаем томпоя
-                Debug.Log("Clicked on object with S_O_PlayerZone script. Tompoy cannot be moved.");
-            }
+            MouseClickPosition = hit.point;
+            Tompoy.transform.position = MouseClickPosition; // Перемещаем Томпоя в точку клика
         }
     }
 
@@ -232,41 +254,8 @@ public class S_O_PLayerController : MonoBehaviour
     {
         Oponent.isMyTurn = true;
 
+
         OnTurnChange?.Invoke(Oponent);
-    }
-
-
-    //*********************************************************************INPUTS*************************************************
-    public void OnTapLMB(InputAction.CallbackContext context)
-    {
-        if (isAI == false && isMyTurn == true && TompoyClicked == false && context.performed == true)
-        {
-            MoveTompoyToMousePosition();
-        }
-    }
-
-    public void OnReleaseLMB(InputAction.CallbackContext context)
-    {
-        Debug.Log("I'm Trying!");
-        if (isAI == false && isMyTurn == true && TompoyClicked == true && ImpulseForce >= 10 && context.performed == true)
-        {
-            Debug.Log(ImpulseForce);
-            StartCoroutine(LaunchTompoy());
-        }
-        else
-        {
-            TompoyClicked = false;
-        }
-    }
-
-    public void OnPressLMB(InputAction.CallbackContext context)
-    {
-
-        if (isAI == false && isMyTurn == true && TompoyClicked == false && context.performed == true)
-        {
-            StartRay();
-        }
-
     }
 
 }
