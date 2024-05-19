@@ -200,7 +200,7 @@ public class S_O_PLayerController : MonoBehaviour
 
         Vector2 randomPoint = UnityEngine.Random.insideUnitCircle.normalized * moveRadius;
 
-        Vector3 newPosition = playZoneCenter + new Vector3(randomPoint.x, 0f, randomPoint.y);
+        Vector3 newPosition = playZoneCenter + new Vector3(randomPoint.x, 1f, randomPoint.y);
 
         Tompoy.transform.position = newPosition;
 
