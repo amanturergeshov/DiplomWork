@@ -11,7 +11,7 @@
                     "id": "d2d62e07-6769-49fc-aae0-e0f54c67aa10",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": "Tap",
+                    "interactions": "MultiTap",
                     "initialStateCheck": true
                 },
                 {
