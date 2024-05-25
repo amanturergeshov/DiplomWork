@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEditor.PackageManager;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,6 +24,10 @@ public class S_O_PLayerController : MonoBehaviour
     private bool TompoyClicked = false;
     private float ImpulseForce = 0;
     public List<GameObject> alchikObjects = new List<GameObject>();
+
+    //****************************************************************************AIM LENGHT*****************************************************
+    private float AimLineLenght = 0.03f;
+    public GameObject AimLine;
 
     //**********************************************************************CAMERA PROPERTIES*******************************************************
     public float CameraRotationSpeed;
@@ -110,6 +115,8 @@ public class S_O_PLayerController : MonoBehaviour
             {
                 MouseClickPosition = Tompoy.transform.position;
                 TompoyClicked = true;
+
+                AimLine.SetActive(true);
             }
             else
             {
@@ -127,12 +134,15 @@ public class S_O_PLayerController : MonoBehaviour
         if (Physics.Raycast(ray, out hit, 10000f, layerForLaunch))
         {
             CameraHitPosition = hit.point;
-            Vector3 TestPos = (Tompoy.transform.position - CameraHitPosition);
+            Vector3 tempTompoyPos = new Vector3(Tompoy.transform.position.x, CameraHitPosition.y, Tompoy.transform.position.z);
+            Vector3 TestPos = (tempTompoyPos - CameraHitPosition);
             Vector3 TempPos = TestPos;
 
             ImpulseForce = Math.Clamp(((Vector3.Distance(Tompoy.transform.position, CameraHitPosition)) * 50), 1f, 100f);
 
             LaunchVector = Vector3.ClampMagnitude(TempPos * 5, 1f);
+
+            DrawAimLine();
         }
 
     }
@@ -153,6 +163,9 @@ public class S_O_PLayerController : MonoBehaviour
         {
             rb.AddForce(LaunchVector * ImpulseForce, ForceMode.Impulse);
             TompoyClicked = false;
+
+
+            AimLine.SetActive(false);
 
             isMyTurn = false;
 
@@ -204,6 +217,10 @@ public class S_O_PLayerController : MonoBehaviour
 
         Tompoy.transform.position = newPosition;
 
+        Vector3 currentRotation = Tompoy.transform.rotation.eulerAngles;
+        Tompoy.transform.rotation = Quaternion.Euler(0f, currentRotation.y, currentRotation.z);
+
+
     }
     //**************************************************************************RELOCATE TOMPOY***********************************************
     void MoveTompoyToMousePosition()
@@ -248,7 +265,7 @@ public class S_O_PLayerController : MonoBehaviour
     public void OnReleaseLMB(InputAction.CallbackContext context)
     {
         Debug.Log("I'm Trying!");
-        if (isAI == false && isMyTurn == true && TompoyClicked == true && ImpulseForce >= 10 && context.performed == true)
+        if (isAI == false && isMyTurn == true && TompoyClicked == true && ImpulseForce >= 25 && context.performed == true)
         {
             Debug.Log(ImpulseForce);
             StartCoroutine(LaunchTompoy());
@@ -267,6 +284,15 @@ public class S_O_PLayerController : MonoBehaviour
             StartRay();
         }
 
+    }
+    //*********************************************************************DRAW AimLine*************************************************
+    public void DrawAimLine()
+    {
+        AimLine.transform.forward = LaunchVector.normalized;
+
+        AimLine.transform.localScale = new Vector3(0.25f, 0.25f, LaunchVector.magnitude * ImpulseForce * AimLineLenght);
+
+        AimLine.transform.position = Tompoy.transform.position;
     }
 
 }
