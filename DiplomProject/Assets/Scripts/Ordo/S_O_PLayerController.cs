@@ -36,6 +36,13 @@ public class S_O_PLayerController : MonoBehaviour
     private bool rotatingLeft;
     private Vector3 CameraHitPosition;
     private Camera mainCamera;
+
+    //**********************************************************************TIMER*****************************************************************
+    public float turnTimeLimit = 600f;
+    private float turnTimer;
+    private bool isTurnTimerRunning;
+    public string TimerString;
+
     //************************************************************************DELEGATES*************************************************************
     public delegate void TurnChangeEvent(S_O_PLayerController newActivePlayer);
     public event TurnChangeEvent OnTurnChange;
@@ -43,11 +50,9 @@ public class S_O_PLayerController : MonoBehaviour
     //**********************************************************************START*******************************************************
     private void Start()
     {
+        turnTimer = turnTimeLimit;
 
-        // if (isMyTurn == false)
-        // {
-        //     GiveTurnToOponent();
-        // }
+        UpdateTimerDisplay();
 
         mainCamera = Camera.main;
 
@@ -58,6 +63,30 @@ public class S_O_PLayerController : MonoBehaviour
             alchikObjects.Add(obj);
         }
     }
+    //*************************************************************TIMER FUNCTIONS****************************************************************
+    void StartTurnTimer()
+    {
+        isTurnTimerRunning = true;
+        StartCoroutine(TurnTimer());
+    }
+    void UpdateTimerDisplay()
+    {
+        TimeSpan timeSpan = TimeSpan.FromSeconds(turnTimer);
+        TimerString = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+    }
+
+    IEnumerator TurnTimer()
+    {
+        while (turnTimer > 0 && isTurnTimerRunning)
+        {
+            yield return new WaitForSeconds(1f);
+            turnTimer--;
+            UpdateTimerDisplay();
+        }
+    }
+
+
+
     //**********************************************************************UPDATE*******************************************************
     void Update()
     {
@@ -248,8 +277,9 @@ public class S_O_PLayerController : MonoBehaviour
 
     public void GiveTurnToOponent()
     {
+        isTurnTimerRunning = false;
         Oponent.isMyTurn = true;
-
+        Oponent.StartTurnTimer();
         OnTurnChange?.Invoke(Oponent);
     }
 

@@ -21,9 +21,9 @@ public class S_TK_PlayerController : MonoBehaviour
     public bool PlayerHasTuz = false;
     public S_TK_Schetchik OurScoreLunka;
     //***************************************TIMER***********************************************
-    public float turnTimeLimit = 600f; // 10 минут в секундах
-    private float turnTimer; // Текущий таймер хода
-    private bool isTurnTimerRunning; // Флаг, указывающий, что таймер хода запуще
+    public float turnTimeLimit = 600f;
+    private float turnTimer;
+    private bool isTurnTimerRunning;
     public string TimerString;
     //***************************************START***********************************************
     void Start()
@@ -34,9 +34,7 @@ public class S_TK_PlayerController : MonoBehaviour
         {
             StartTurnTimer();
         }
-        // Находим все объекты с компонентом S_Lunka на сцене
         S_TK_Lunka[] allLunki = FindObjectsOfType<S_TK_Lunka>();
-        // Подписываемся на событие ScoreApplied для каждой лунки, если она не содержится в OurLunki
         foreach (S_TK_Lunka lunka in allLunki)
         {
             if (!OurLunki.Contains(lunka.gameObject))
@@ -184,6 +182,24 @@ public class S_TK_PlayerController : MonoBehaviour
             OurScoreLunka.GameOver();
         }
     }
+
+    public void OnGameOver()
+    {
+        StopAllCoroutines();
+        isMyTurn = false;
+    }
+    public bool CheckTurnPossible()
+    {
+        foreach (GameObject lunkaObject in OurLunki)
+        {
+            S_TK_Lunka lunka = lunkaObject.GetComponent<S_TK_Lunka>();
+            if (lunka.Korgools.Count != 0)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
     //***************************************TIMER**************************************************************
     void StartTurnTimer()
     {
@@ -206,22 +222,5 @@ public class S_TK_PlayerController : MonoBehaviour
         // Преобразуем время в минуты и секунды
         TimeSpan timeSpan = TimeSpan.FromSeconds(turnTimer);
         TimerString = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
-    }
-    public void OnGameOver()
-    {
-        StopAllCoroutines();
-        isMyTurn = false;
-    }
-    public bool CheckTurnPossible()
-    {
-        foreach (GameObject lunkaObject in OurLunki)
-        {
-            S_TK_Lunka lunka = lunkaObject.GetComponent<S_TK_Lunka>();
-            if (lunka.Korgools.Count != 0)
-            {
-                return true;
-            }
-        }
-        return false;
     }
 }

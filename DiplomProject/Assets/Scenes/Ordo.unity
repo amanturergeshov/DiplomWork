@@ -251,6 +251,8 @@ MonoBehaviour:
   alchikObjects: []
   AimLine: {fileID: 1628727421}
   CameraRotationSpeed: 20
+  turnTimeLimit: 600
+  TimerString: 
 --- !u!4 &72931769
 Transform:
   m_ObjectHideFlags: 0
@@ -472,6 +474,8 @@ MonoBehaviour:
   alchikObjects: []
   AimLine: {fileID: 1628727421}
   CameraRotationSpeed: 20
+  turnTimeLimit: 600
+  TimerString: 
 --- !u!4 &127483534
 Transform:
   m_ObjectHideFlags: 0
@@ -887,7 +891,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1d75ea278b790849a761d577586e46b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OurPlayers:
+  OurTompoys:
   - {fileID: 127483533}
   - {fileID: 72931768}
   timerDuration: 2

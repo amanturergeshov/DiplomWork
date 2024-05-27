@@ -6,7 +6,7 @@ using UnityEngine;
 public class S_O_GameManager : MonoBehaviour
 {
     public List<S_O_PLayerController> OurTompoys;
-    public float timerDuration = 2f;
+    public float timerDuration = 1f;
     public float launchForce = 100f;
     public float maxRotationSpeed = 5600f;
     private bool gameEnded = false;
