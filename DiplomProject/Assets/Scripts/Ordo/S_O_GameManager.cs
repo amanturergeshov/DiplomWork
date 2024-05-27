@@ -12,6 +12,11 @@ public class S_O_GameManager : MonoBehaviour
     private bool gameEnded = false;
 
     public GameObject PlayZone;
+    public GameObject prefabToSpawn; // Префаб для спавна
+    public int numberOfObjects = 100; // Общее количество объектов для спавна
+    public float radiusStep = 1f; // Шаг радиуса для увеличения
+
+    private List<GameObject> spawnedObjects = new List<GameObject>(); // Список для хранения заспавненных объектов
 
     void Start()
     {
@@ -22,6 +27,38 @@ public class S_O_GameManager : MonoBehaviour
         else
         {
             Debug.LogError("OurTompoys should contain exactly 2 Tompoys.");
+        }
+
+    }
+
+    void SpawnObjectsInCircle()
+    {
+        int spawnedObjectCount = 0;
+        float currentRadius = 0f;
+
+        while (spawnedObjectCount < numberOfObjects)
+        {
+            int objectsOnCurrentRadius = Mathf.CeilToInt(2 * Mathf.PI * currentRadius / radiusStep);
+
+            for (int i = 0; i < objectsOnCurrentRadius && spawnedObjectCount < numberOfObjects; i++)
+            {
+                float angle = (360f / objectsOnCurrentRadius) * i;
+                float angleRad = Mathf.Deg2Rad * angle;
+
+                Vector3 spawnPosition = new Vector3(
+                    Mathf.Cos(angleRad) * currentRadius,
+                    0, // Y координата на 0
+                    Mathf.Sin(angleRad) * currentRadius
+                );
+
+                Quaternion spawnRotation = Quaternion.Euler(0, UnityEngine.Random.Range(0f, 360f), 0); // Rotation по y любая, но по x и z равна 0
+                GameObject spawnedObject = Instantiate(prefabToSpawn, spawnPosition, spawnRotation);
+                spawnedObjects.Add(spawnedObject); // Добавление объекта в список
+
+                spawnedObjectCount++;
+            }
+
+            currentRadius += radiusStep;
         }
     }
 
@@ -63,7 +100,7 @@ public class S_O_GameManager : MonoBehaviour
                     UnityEngine.Random.Range(-1f, 1f)
                 ).normalized;
 
-                float randomRotationSpeed = UnityEngine.Random.Range(maxRotationSpeed - 100, maxRotationSpeed);
+                float randomRotationSpeed = UnityEngine.Random.Range(-maxRotationSpeed, maxRotationSpeed);
 
                 rb.AddTorque(randomRotationAxis * randomRotationSpeed, ForceMode.VelocityChange);
             }
@@ -88,7 +125,7 @@ public class S_O_GameManager : MonoBehaviour
         }
         if (counter == 1)
         {
-            Debug.Log(" winner ");
+            Debug.Log("Winner");
             if (winner)
             {
                 Debug.Log(winner);
@@ -98,8 +135,16 @@ public class S_O_GameManager : MonoBehaviour
             {
                 Tompoy.ReLocateTompoy();
             }
-            winner.Oponent.GiveTurnToOponent();
+            SpawnObjectsInCircle();
             PlayZone.SetActive(true);
+            PlayZone.GetComponent<S_O_PlayZone>().InsideAlchikObjects = spawnedObjects;
+
+            foreach (var Tompoy in OurTompoys)
+            {
+                Tompoy.alchikObjects = spawnedObjects;
+            }
+
+            winner.Oponent.GiveTurnToOponent();
         }
     }
 }

@@ -10,12 +10,6 @@ public class S_O_PlayZone : MonoBehaviour
     public S_O_PLayerController ActivePlayer;
     void Start()
     {
-        GameObject[] alchikArray = GameObject.FindGameObjectsWithTag("Alchik");
-        foreach (GameObject obj in alchikArray)
-        {
-            InsideAlchikObjects.Add(obj);
-        }
-
         if (Players.Count > 0)
         {
             // Подписываем метод SetActivePlayer на событие OnTurnChange каждого игрока

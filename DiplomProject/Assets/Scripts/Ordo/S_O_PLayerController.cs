@@ -56,13 +56,6 @@ public class S_O_PLayerController : MonoBehaviour
         UpdateTimerDisplay();
 
         mainCamera = Camera.main;
-
-        //Запоминаем все альчики на сцене
-        GameObject[] alchikArray = GameObject.FindGameObjectsWithTag("Alchik");
-        foreach (GameObject obj in alchikArray)
-        {
-            alchikObjects.Add(obj);
-        }
     }
     //*************************************************************TIMER FUNCTIONS****************************************************************
     void StartTurnTimer()
