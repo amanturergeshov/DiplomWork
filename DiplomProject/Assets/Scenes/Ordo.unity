@@ -658,7 +658,7 @@ MonoBehaviour:
   maxRotationSpeed: 360
   PlayZone: {fileID: 619774285}
   prefabToSpawn: {fileID: 1230048344669613327, guid: 8269496d0f7d0584db7266dbc13f5774, type: 3}
-  numberOfObjects: 15
+  numberOfObjects: 3
   radiusStep: 0.3
 --- !u!4 &306527891
 Transform:
@@ -954,6 +954,7 @@ MonoBehaviour:
   Players:
   - {fileID: 127483533}
   - {fileID: 72931768}
+  GameManager: {fileID: 306527890}
   ActivePlayer: {fileID: 0}
 --- !u!135 &619774287
 SphereCollider:

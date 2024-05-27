@@ -198,14 +198,16 @@ public class S_O_PLayerController : MonoBehaviour
             if (!alchikKnockedOut)
             {
                 GiveTurnToOponent();
+                yield return new WaitForSeconds(1.5f);
+                ReLocateTompoy();
             }
             else
             {
+                yield return new WaitForSeconds(1.5f);
                 isMyTurn = true;
+                ReLocateTompoy();
             }
 
-            yield return new WaitForSeconds(1.5f);
-            ReLocateTompoy();
 
             // Сброс настроек хода
             ResetTurn();
@@ -223,7 +225,7 @@ public class S_O_PLayerController : MonoBehaviour
         {
             float delay = UnityEngine.Random.Range(2f, 3f);
             yield return new WaitForSeconds(delay);
-            
+
             ImpulseForce = 80;
             GameObject randomAlchik = alchikObjects[UnityEngine.Random.Range(0, alchikObjects.Count)];
 

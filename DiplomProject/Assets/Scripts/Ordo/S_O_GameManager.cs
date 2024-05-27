@@ -5,19 +5,25 @@ using UnityEngine;
 
 public class S_O_GameManager : MonoBehaviour
 {
+
+    //*******************************************************************TOSS UP PROPERTIES***********************************************************************
     public List<S_O_PLayerController> OurTompoys;
     public float timerDuration = 1f;
     public float launchForce = 100f;
     public float maxRotationSpeed = 5600f;
     private bool gameEnded = false;
 
+    S_O_PLayerController TossUpWinner = null;
     public GameObject PlayZone;
-    public GameObject prefabToSpawn; // Префаб для спавна
-    public int numberOfObjects = 100; // Общее количество объектов для спавна
-    public float radiusStep = 1f; // Шаг радиуса для увеличения
 
-    private List<GameObject> spawnedObjects = new List<GameObject>(); // Список для хранения заспавненных объектов
+    //*******************************************************************SPAWN PROPERTIES***********************************************************************
+    public GameObject prefabToSpawn;
+    public int numberOfObjects = 100;
+    public float radiusStep = 1f;
 
+    private List<GameObject> spawnedObjects = new List<GameObject>();
+
+    //*******************************************************************START***********************************************************************
     void Start()
     {
         if (OurTompoys.Count == 2)
@@ -31,6 +37,7 @@ public class S_O_GameManager : MonoBehaviour
 
     }
 
+    //*******************************************************************SPAWN ALCHIKS***********************************************************************
     void SpawnObjectsInCircle()
     {
         int spawnedObjectCount = 0;
@@ -62,6 +69,7 @@ public class S_O_GameManager : MonoBehaviour
         }
     }
 
+    //*******************************************************************TOSS UP***********************************************************************
     IEnumerator TossUp()
     {
         while (!gameEnded)
@@ -114,37 +122,43 @@ public class S_O_GameManager : MonoBehaviour
     void CheckForTossEnd()
     {
         int counter = 0;
-        S_O_PLayerController winner = null;
         foreach (var Tompoy in OurTompoys)
         {
             if (Math.Round(Tompoy.Tompoy.transform.rotation.z) == 0 || Math.Round(Tompoy.Tompoy.transform.rotation.z) == 180)
             {
-                winner = Tompoy;
+                TossUpWinner = Tompoy;
                 counter++;
             }
         }
         if (counter == 1)
         {
-            Debug.Log("Winner");
-            if (winner)
-            {
-                Debug.Log(winner);
-            }
             gameEnded = true;
-            foreach (var Tompoy in OurTompoys)
-            {
-                Tompoy.ReLocateTompoy();
-            }
-            SpawnObjectsInCircle();
-            PlayZone.SetActive(true);
-            PlayZone.GetComponent<S_O_PlayZone>().InsideAlchikObjects = spawnedObjects;
-
-            foreach (var Tompoy in OurTompoys)
-            {
-                Tompoy.alchikObjects = spawnedObjects;
-            }
-
-            winner.Oponent.GiveTurnToOponent();
+            StartRound(TossUpWinner);
         }
+    }
+
+    //*******************************************************************START ROUND***********************************************************************
+    public void StartRound(S_O_PLayerController TossUpWinner)
+    {
+        foreach (var Tompoy in OurTompoys)
+        {
+            Tompoy.ReLocateTompoy();
+        }
+        SpawnObjectsInCircle();
+        PlayZone.SetActive(true);
+        PlayZone.GetComponent<S_O_PlayZone>().InsideAlchikObjects = spawnedObjects;
+
+        foreach (var Tompoy in OurTompoys)
+        {
+            Tompoy.alchikObjects = spawnedObjects;
+        }
+        TossUpWinner.Oponent.GiveTurnToOponent();
+
+    }
+    public void Restart()
+    {
+        spawnedObjects.Clear();
+        TossUpWinner = TossUpWinner.Oponent;
+        StartRound(TossUpWinner);
     }
 }

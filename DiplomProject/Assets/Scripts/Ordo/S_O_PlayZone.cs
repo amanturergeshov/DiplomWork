@@ -7,6 +7,8 @@ public class S_O_PlayZone : MonoBehaviour
     public List<GameObject> InsideAlchikObjects = new List<GameObject>();
     public List<S_O_PLayerController> Players;
 
+    public S_O_GameManager GameManager;
+
     public S_O_PLayerController ActivePlayer;
     void Start()
     {
@@ -55,6 +57,8 @@ public class S_O_PlayZone : MonoBehaviour
             }
         }
 
+        StartCoroutine(CheckInsidePlayZone());
+
         yield return new WaitForSeconds(2f);
         Destroy(Chuko);
     }
@@ -62,5 +66,14 @@ public class S_O_PlayZone : MonoBehaviour
     public void SetActivePlayer(S_O_PLayerController newActivePlayer)
     {
         ActivePlayer = newActivePlayer;
+    }
+
+    IEnumerator CheckInsidePlayZone()
+    {
+        if (InsideAlchikObjects.Count == 0)
+        {
+            yield return new WaitForSeconds(2f);
+            GameManager.Restart();
+        }
     }
 }
