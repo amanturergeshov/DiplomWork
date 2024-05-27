@@ -43,10 +43,11 @@ public class S_O_PLayerController : MonoBehaviour
     //**********************************************************************START*******************************************************
     private void Start()
     {
-        if (isMyTurn == false)
-        {
-            GiveTurnToOponent();
-        }
+
+        // if (isMyTurn == false)
+        // {
+        //     GiveTurnToOponent();
+        // }
 
         mainCamera = Camera.main;
 
