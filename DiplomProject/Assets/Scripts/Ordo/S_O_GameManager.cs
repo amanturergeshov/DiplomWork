@@ -8,7 +8,7 @@ public class S_O_GameManager : MonoBehaviour
     public List<S_O_PLayerController> OurPlayers;
     public float timerDuration = 2f;
     public float launchForce = 100f;
-    public float maxRotationSpeed = 560f;
+    public float maxRotationSpeed = 5600f;
     private bool gameEnded = false;
 
     void Start()
@@ -31,7 +31,7 @@ public class S_O_GameManager : MonoBehaviour
             yield return StartCoroutine(LaunchPlayersAfterTimer());
 
             // Ждем пока один из игроков не упадет с ротацией по Z = 90 градусов
-            yield return new WaitForSeconds(6f);
+            yield return new WaitForSeconds(5f);
             CheckForGameEnd();
             yield return new WaitForSeconds(0.5f);
         }
@@ -63,7 +63,7 @@ public class S_O_GameManager : MonoBehaviour
                     UnityEngine.Random.Range(-1f, 1f)
                 ).normalized;
 
-                float randomRotationSpeed = UnityEngine.Random.Range(-maxRotationSpeed, maxRotationSpeed);
+                float randomRotationSpeed = UnityEngine.Random.Range(maxRotationSpeed-100, maxRotationSpeed);
 
                 rb.AddTorque(randomRotationAxis * randomRotationSpeed, ForceMode.VelocityChange);
             }
@@ -76,14 +76,24 @@ public class S_O_GameManager : MonoBehaviour
 
     void CheckForGameEnd()
     {
+        int counter = 0;
+        S_O_PLayerController winner=null;
         foreach (var player in OurPlayers)
         {
             if (Math.Round(player.Tompoy.transform.rotation.z) == 0 || Math.Round(player.Tompoy.transform.rotation.z) == 180)
             {
-                gameEnded = true;
-                Debug.Log(player.name + " has landed with a Z rotation of 90 degrees.");
-                break;
+                winner = player;
+                counter++;
             }
+        }
+        if (counter == 1)
+        {
+            Debug.Log(" winner ");
+            if (winner)
+            {
+                Debug.Log(winner);
+            }
+            // gameEnded = true;
         }
     }
 }
