@@ -893,6 +893,7 @@ MonoBehaviour:
   timerDuration: 2
   launchForce: 10
   maxRotationSpeed: 360
+  PlayZone: {fileID: 619774285}
 --- !u!4 &306527891
 Transform:
   m_ObjectHideFlags: 0

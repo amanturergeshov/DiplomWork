@@ -5,54 +5,54 @@ using UnityEngine;
 
 public class S_O_GameManager : MonoBehaviour
 {
-    public List<S_O_PLayerController> OurPlayers;
+    public List<S_O_PLayerController> OurTompoys;
     public float timerDuration = 2f;
     public float launchForce = 100f;
     public float maxRotationSpeed = 5600f;
     private bool gameEnded = false;
 
+    public GameObject PlayZone;
+
     void Start()
     {
-        if (OurPlayers.Count == 2)
+        if (OurTompoys.Count == 2)
         {
-            StartCoroutine(GameLoop());
+            StartCoroutine(TossUp());
         }
         else
         {
-            Debug.LogError("OurPlayers should contain exactly 2 players.");
+            Debug.LogError("OurTompoys should contain exactly 2 Tompoys.");
         }
     }
 
-    IEnumerator GameLoop()
+    IEnumerator TossUp()
     {
         while (!gameEnded)
         {
-            PositionPlayers();
-            yield return StartCoroutine(LaunchPlayersAfterTimer());
-
-            // Ждем пока один из игроков не упадет с ротацией по Z = 90 градусов
+            PositionTompoys();
+            yield return StartCoroutine(LaunchTompoysAfterTimer());
             yield return new WaitForSeconds(5f);
-            CheckForGameEnd();
+            CheckForTossEnd();
             yield return new WaitForSeconds(0.5f);
         }
     }
 
-    void PositionPlayers()
+    void PositionTompoys()
     {
-        OurPlayers[0].Tompoy.transform.position = new Vector3(-1, 0, 0);
-        OurPlayers[0].Tompoy.transform.rotation = Quaternion.identity;
+        OurTompoys[0].Tompoy.transform.position = new Vector3(-1, 0, 0);
+        OurTompoys[0].Tompoy.transform.rotation = Quaternion.identity;
 
-        OurPlayers[1].Tompoy.transform.position = new Vector3(1, 0, 0);
-        OurPlayers[1].Tompoy.transform.rotation = Quaternion.identity;
+        OurTompoys[1].Tompoy.transform.position = new Vector3(1, 0, 0);
+        OurTompoys[1].Tompoy.transform.rotation = Quaternion.identity;
     }
 
-    IEnumerator LaunchPlayersAfterTimer()
+    IEnumerator LaunchTompoysAfterTimer()
     {
         yield return new WaitForSeconds(timerDuration);
 
-        foreach (var player in OurPlayers)
+        foreach (var Tompoy in OurTompoys)
         {
-            Rigidbody rb = player.Tompoy.GetComponent<Rigidbody>();
+            Rigidbody rb = Tompoy.Tompoy.GetComponent<Rigidbody>();
             if (rb != null)
             {
                 rb.AddForce(Vector3.up * launchForce, ForceMode.VelocityChange);
@@ -63,26 +63,26 @@ public class S_O_GameManager : MonoBehaviour
                     UnityEngine.Random.Range(-1f, 1f)
                 ).normalized;
 
-                float randomRotationSpeed = UnityEngine.Random.Range(maxRotationSpeed-100, maxRotationSpeed);
+                float randomRotationSpeed = UnityEngine.Random.Range(maxRotationSpeed - 100, maxRotationSpeed);
 
                 rb.AddTorque(randomRotationAxis * randomRotationSpeed, ForceMode.VelocityChange);
             }
             else
             {
-                Debug.LogError("Rigidbody is missing on the player: " + player.name);
+                Debug.LogError("Rigidbody is missing on the Tompoy: " + Tompoy.name);
             }
         }
     }
 
-    void CheckForGameEnd()
+    void CheckForTossEnd()
     {
         int counter = 0;
-        S_O_PLayerController winner=null;
-        foreach (var player in OurPlayers)
+        S_O_PLayerController winner = null;
+        foreach (var Tompoy in OurTompoys)
         {
-            if (Math.Round(player.Tompoy.transform.rotation.z) == 0 || Math.Round(player.Tompoy.transform.rotation.z) == 180)
+            if (Math.Round(Tompoy.Tompoy.transform.rotation.z) == 0 || Math.Round(Tompoy.Tompoy.transform.rotation.z) == 180)
             {
-                winner = player;
+                winner = Tompoy;
                 counter++;
             }
         }
@@ -93,7 +93,13 @@ public class S_O_GameManager : MonoBehaviour
             {
                 Debug.Log(winner);
             }
-            // gameEnded = true;
+            gameEnded = true;
+            foreach (var Tompoy in OurTompoys)
+            {
+                Tompoy.ReLocateTompoy();
+            }
+            winner.Oponent.GiveTurnToOponent();
+            PlayZone.SetActive(true);
         }
     }
 }
