@@ -15,6 +15,7 @@ public class S_O_PLayerController : MonoBehaviour
     public bool isMyTurn;
     public S_O_Score OurScore;
     public S_O_PLayerController Oponent;
+    public bool alchikKnockedOut = false;
     //**********************************************************************TOMPOY CONTROL PROPERTIES*******************************************************
     public LayerMask layer;
     public LayerMask layerForLaunch;
@@ -51,7 +52,7 @@ public class S_O_PLayerController : MonoBehaviour
     private void Start()
     {
         turnTimer = turnTimeLimit;
-
+        ResetTurn();
         UpdateTimerDisplay();
 
         mainCamera = Camera.main;
@@ -194,23 +195,32 @@ public class S_O_PLayerController : MonoBehaviour
             rb.AddForce(LaunchVector * ImpulseForce, ForceMode.Impulse);
             TompoyClicked = false;
 
-
             AimLine.SetActive(false);
 
-            isMyTurn = false;
 
+            isMyTurn = false;
             yield return new WaitForSeconds(2f);
-            GiveTurnToOponent();
-            // isMyTurn = true;
+
+            // Передача хода противнику только если не выбит ни один альчик
+            if (!alchikKnockedOut)
+            {
+                GiveTurnToOponent();
+            }
+            else
+            {
+                isMyTurn = true;
+            }
+
             yield return new WaitForSeconds(1.5f);
             ReLocateTompoy();
 
+            // Сброс настроек хода
+            ResetTurn();
         }
         else
         {
-            Debug.LogError("Rigidbody component not found on Tompoy object.");
+            Debug.LogError("Компонент Rigidbody не найден на объекте Tompoy.");
         }
-
     }
 
     //***********************************************************************AI LAUCH**********************************************************************
@@ -218,14 +228,15 @@ public class S_O_PLayerController : MonoBehaviour
     {
         if (alchikObjects.Count > 0)
         {
+            float delay = UnityEngine.Random.Range(2f, 3f);
+            yield return new WaitForSeconds(delay);
+            
             ImpulseForce = 80;
             GameObject randomAlchik = alchikObjects[UnityEngine.Random.Range(0, alchikObjects.Count)];
 
             Vector3 direction = randomAlchik.transform.position - Tompoy.transform.position;
             LaunchVector = direction.normalized;
 
-            float delay = UnityEngine.Random.Range(2f, 3f);
-            yield return new WaitForSeconds(delay);
 
             StartCoroutine(LaunchTompoy());
         }
@@ -281,6 +292,10 @@ public class S_O_PLayerController : MonoBehaviour
         Oponent.isMyTurn = true;
         Oponent.StartTurnTimer();
         OnTurnChange?.Invoke(Oponent);
+    }
+    void ResetTurn()
+    {
+        alchikKnockedOut = false; // Сброс флага в начале хода
     }
 
 

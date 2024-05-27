@@ -35,6 +35,10 @@ public class S_O_PlayZone : MonoBehaviour
         if (InsideAlchikObjects.Contains(other.gameObject))
         {
             StartCoroutine(RemoveChuko(other.gameObject));
+            if (ActivePlayer != null)
+            {
+                ActivePlayer.alchikKnockedOut = true; // Установить флаг
+            }
         }
     }
     void OnTriggerEnter(Collider other)
