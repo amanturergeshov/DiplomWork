@@ -30,7 +30,8 @@ public class S_O_GameManager : MonoBehaviour
     //*******************************************************************ROUND PROPERTIES***********************************************************************
     public delegate void RoundWinnerDelegate();
     public event RoundWinnerDelegate OnRoundWinnerDetermined;
-
+    //*******************************************************************ROUND PROPERTIES***********************************************************************
+    public S_O_GameOverScreen GameOverScreen;
 
     //*******************************************************************START***********************************************************************
     void Start()
@@ -136,8 +137,8 @@ public class S_O_GameManager : MonoBehaviour
         int counter = 0;
         foreach (var Tompoy in OurTompoys)
         {
-            Debug.Log(Tompoy + " " + Mathf.Round(Tompoy.Tompoy.transform.rotation.z));
-            if (Mathf.Round(Tompoy.Tompoy.transform.rotation.z) == 0f || Mathf.Round(Tompoy.Tompoy.transform.rotation.z) % 180 == 0f)
+            Debug.Log(Tompoy + " " + Mathf.RoundToInt(Tompoy.Tompoy.transform.rotation.eulerAngles.z));
+            if (Mathf.Round(Tompoy.Tompoy.transform.rotation.eulerAngles.z) == 0f || Mathf.Round(Tompoy.Tompoy.transform.rotation.eulerAngles.z) % 180 == 0f)
             {
                 TossUpWinner = Tompoy;
                 counter++;
@@ -156,7 +157,7 @@ public class S_O_GameManager : MonoBehaviour
         CurrentRound++;
         if (CurrentRound > MaxRound)
         {
-            DetermineGameWinner();
+            StartCoroutine(DetermineGameWinner());
         }
         else
         {
@@ -237,22 +238,22 @@ public class S_O_GameManager : MonoBehaviour
         StartCoroutine(Restart());
     }
 
-    public void DetermineGameWinner()
+    IEnumerator DetermineGameWinner()
     {
+        yield return new WaitForSeconds(1f);
         if (OurTompoys[0].OurScore.WinRounds > OurTompoys[1].OurScore.WinRounds)
         {
-            Debug.Log(OurTompoys[0].PlayerName + " Is Winner");
             // На случай победы первого игрока
+            GameOverScreen.Setup(OurTompoys[0].PlayerName, OurTompoys[0].OurScore.WinRounds);
         }
         else if (OurTompoys[1].OurScore.WinRounds > OurTompoys[0].OurScore.WinRounds)
         {
-            Debug.Log(OurTompoys[1].PlayerName + " Is Winner");
             // На случай победы второго игрока
+            GameOverScreen.Setup(OurTompoys[1].PlayerName, OurTompoys[1].OurScore.WinRounds);
         }
         else
         {
-            Debug.Log("Draw");
-            // На случай ничьи
+            GameOverScreen.Setup("Draw", 0);
         }
     }
 }
