@@ -155,10 +155,21 @@ public class S_O_GameManager : MonoBehaviour
         TossUpWinner.Oponent.GiveTurnToOponent();
 
     }
-    public void Restart()
+    IEnumerator Restart()
     {
         spawnedObjects.Clear();
+        foreach (var Tompoy in OurTompoys)
+        {
+            Tompoy.isMyTurn = false;
+            Tompoy.CompleteTurn();
+        }
         TossUpWinner = TossUpWinner.Oponent;
+        yield return new WaitForSeconds(1f);
         StartRound(TossUpWinner);
+    }
+
+    public void CallRestart()
+    {
+        StartCoroutine(Restart());
     }
 }

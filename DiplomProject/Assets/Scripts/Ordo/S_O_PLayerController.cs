@@ -283,14 +283,15 @@ public class S_O_PLayerController : MonoBehaviour
 
     public void GiveTurnToOponent()
     {
+        isMyTurn = false;
         isTurnTimerRunning = false;
         Oponent.isMyTurn = true;
         Oponent.StartTurnTimer();
         OnTurnChange?.Invoke(Oponent);
     }
-    void ResetTurn()
+    public void ResetTurn()
     {
-        alchikKnockedOut = false; // Сброс флага в начале хода
+        alchikKnockedOut = false;
     }
 
 
@@ -336,4 +337,12 @@ public class S_O_PLayerController : MonoBehaviour
         AimLine.transform.position = Tompoy.transform.position;
     }
 
+
+    public void CompleteTurn()
+    {
+        ResetTurn();
+        isMyTurn = false;
+        isTurnTimerRunning = false;
+        TompoyClicked = false;
+    }
 }

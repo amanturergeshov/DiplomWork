@@ -72,8 +72,12 @@ public class S_O_PlayZone : MonoBehaviour
     {
         if (InsideAlchikObjects.Count == 0)
         {
-            yield return new WaitForSeconds(2f);
-            GameManager.Restart();
+            foreach (var player in Players)
+            {
+                player.CompleteTurn();
+            }
+            yield return new WaitForSeconds(1f);
+            GameManager.CallRestart();
         }
     }
 }
