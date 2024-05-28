@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class S_O_GameManager : MonoBehaviour
 {
-
     //*******************************************************************TOSS UP PROPERTIES***********************************************************************
     public List<S_O_PLayerController> OurTompoys;
     public float timerDuration = 1f;
@@ -23,18 +22,26 @@ public class S_O_GameManager : MonoBehaviour
 
     private List<GameObject> spawnedObjects = new List<GameObject>();
 
+    //*******************************************************************ROUND PROPERTIES***********************************************************************
+    public int CurrentRound = 0;
+    public int MaxRound = 3;
+    public int[] RoundsWinner = new int[4]; //0 - никто ещё не выиграл, 1- выиграл первый игрок, 2- выиграл второй игрок (для UI)
+
     //*******************************************************************START***********************************************************************
     void Start()
     {
         if (OurTompoys.Count == 2)
         {
+            for (int i = 0; i < RoundsWinner.Length; i++)
+            {
+                RoundsWinner[i] = 0; // Заполняем массив нулями
+            }
             StartCoroutine(TossUp());
         }
         else
         {
             Debug.LogError("OurTompoys should contain exactly 2 Tompoys.");
         }
-
     }
 
     //*******************************************************************SPAWN ALCHIKS***********************************************************************
@@ -140,21 +147,29 @@ public class S_O_GameManager : MonoBehaviour
     //*******************************************************************START ROUND***********************************************************************
     public void StartRound(S_O_PLayerController TossUpWinner)
     {
-        foreach (var Tompoy in OurTompoys)
+        CurrentRound++;
+        if (CurrentRound > MaxRound)
         {
-            Tompoy.ReLocateTompoy();
+            DetermineGameWinner();
         }
-        SpawnObjectsInCircle();
-        PlayZone.SetActive(true);
-        PlayZone.GetComponent<S_O_PlayZone>().InsideAlchikObjects = spawnedObjects;
-
-        foreach (var Tompoy in OurTompoys)
+        else
         {
-            Tompoy.alchikObjects = spawnedObjects;
-        }
-        TossUpWinner.Oponent.GiveTurnToOponent();
+            foreach (var Tompoy in OurTompoys)
+            {
+                Tompoy.ReLocateTompoy();
+            }
+            SpawnObjectsInCircle();
+            PlayZone.SetActive(true);
+            PlayZone.GetComponent<S_O_PlayZone>().InsideAlchikObjects = spawnedObjects;
 
+            foreach (var Tompoy in OurTompoys)
+            {
+                Tompoy.alchikObjects = spawnedObjects;
+            }
+            TossUpWinner.Oponent.GiveTurnToOponent();
+        }
     }
+
     IEnumerator Restart()
     {
         spawnedObjects.Clear();
@@ -163,13 +178,69 @@ public class S_O_GameManager : MonoBehaviour
             Tompoy.isMyTurn = false;
             Tompoy.CompleteTurn();
         }
-        TossUpWinner = TossUpWinner.Oponent;
+
+        var roundWinner = CheckWinnerOfRound();
+        if (roundWinner != null)
+        {
+            roundWinner.OurScore.AddWinRounds();
+            TossUpWinner = roundWinner.Oponent; // Начинает раунд проигравший игрок
+        }
+        else
+        {
+            TossUpWinner = TossUpWinner.Oponent;
+        }
         yield return new WaitForSeconds(1f);
         StartRound(TossUpWinner);
+    }
+
+    public S_O_PLayerController CheckWinnerOfRound()
+    {
+        if (CurrentRound < RoundsWinner.Length)
+        {
+            if (OurTompoys[0].OurScore.score > OurTompoys[1].OurScore.score)
+            {
+                RoundsWinner[CurrentRound] = 1;
+                return OurTompoys[0];
+            }
+            else if (OurTompoys[1].OurScore.score > OurTompoys[0].OurScore.score)
+            {
+                RoundsWinner[CurrentRound] = 2;
+                return OurTompoys[1];
+            }
+            else
+            {
+                RoundsWinner[CurrentRound] = 0;
+                return null;
+            }
+        }
+        else
+        {
+            Debug.LogError("CurrentRound is out of bounds for RoundsWinner array");
+            return null;
+        }
     }
 
     public void CallRestart()
     {
         StartCoroutine(Restart());
+    }
+
+    public void DetermineGameWinner()
+    {
+        if (OurTompoys[0].OurScore.WinRounds > OurTompoys[1].OurScore.WinRounds)
+        {
+            Debug.Log(OurTompoys[0].PlayerName + " Is Winner");
+            // На случай победы первого игрока
+        }
+        else if (OurTompoys[1].OurScore.WinRounds > OurTompoys[0].OurScore.WinRounds)
+        {
+            Debug.Log(OurTompoys[1].PlayerName + " Is Winner");
+            // На случай победы второго игрока
+        }
+        else
+        {
+            Debug.Log("Draw");
+            // На случай ничьи
+        }
     }
 }

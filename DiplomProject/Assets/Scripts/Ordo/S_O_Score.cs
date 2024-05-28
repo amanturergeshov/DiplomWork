@@ -5,6 +5,7 @@ using UnityEngine;
 public class S_O_Score : MonoBehaviour
 {
 
+    public int WinRounds;
     public int score;
     // Start is called before the first frame update
     public S_O_PLayerController OwnerPlayer;
@@ -13,5 +14,10 @@ public class S_O_Score : MonoBehaviour
     public void AddScore()
     {
         score++;
+    }
+
+    public void AddWinRounds()
+    {
+        WinRounds++;
     }
 }
