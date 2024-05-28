@@ -10,7 +10,7 @@ public class S_O_GameManager : MonoBehaviour
     public float timerDuration = 1f;
     public float launchForce = 100f;
     public float maxRotationSpeed = 5600f;
-    private bool gameEnded = false;
+    public bool gameEnded = false;
 
     S_O_PLayerController TossUpWinner = null;
     public GameObject PlayZone;
@@ -23,9 +23,14 @@ public class S_O_GameManager : MonoBehaviour
     private List<GameObject> spawnedObjects = new List<GameObject>();
 
     //*******************************************************************ROUND PROPERTIES***********************************************************************
-    public int CurrentRound = 0;
-    public int MaxRound = 3;
-    public int[] RoundsWinner = new int[4]; //0 - никто ещё не выиграл, 1- выиграл первый игрок, 2- выиграл второй игрок (для UI)
+    public int CurrentRound = -1;
+    public int MaxRound = 2;
+    public int[] RoundsWinner = new int[3]; //0 - никто ещё не выиграл, 1- выиграл первый игрок, 2- выиграл второй игрок (для UI)
+
+    //*******************************************************************ROUND PROPERTIES***********************************************************************
+    public delegate void RoundWinnerDelegate();
+    public event RoundWinnerDelegate OnRoundWinnerDetermined;
+
 
     //*******************************************************************START***********************************************************************
     void Start()
@@ -131,7 +136,8 @@ public class S_O_GameManager : MonoBehaviour
         int counter = 0;
         foreach (var Tompoy in OurTompoys)
         {
-            if (Math.Round(Tompoy.Tompoy.transform.rotation.z) == 0 || Math.Round(Tompoy.Tompoy.transform.rotation.z) == 180)
+            Debug.Log(Tompoy + " " + Mathf.Round(Tompoy.Tompoy.transform.rotation.z));
+            if (Mathf.Round(Tompoy.Tompoy.transform.rotation.z) == 0f || Mathf.Round(Tompoy.Tompoy.transform.rotation.z) % 180 == 0f)
             {
                 TossUpWinner = Tompoy;
                 counter++;
@@ -172,14 +178,15 @@ public class S_O_GameManager : MonoBehaviour
 
     IEnumerator Restart()
     {
+        var roundWinner = CheckWinnerOfRound();
         spawnedObjects.Clear();
         foreach (var Tompoy in OurTompoys)
         {
+            Tompoy.OurScore.ResetScore();
             Tompoy.isMyTurn = false;
             Tompoy.CompleteTurn();
         }
 
-        var roundWinner = CheckWinnerOfRound();
         if (roundWinner != null)
         {
             roundWinner.OurScore.AddWinRounds();
@@ -197,28 +204,33 @@ public class S_O_GameManager : MonoBehaviour
     {
         if (CurrentRound < RoundsWinner.Length)
         {
+            S_O_PLayerController winner = null;
             if (OurTompoys[0].OurScore.score > OurTompoys[1].OurScore.score)
             {
                 RoundsWinner[CurrentRound] = 1;
-                return OurTompoys[0];
+                winner = OurTompoys[0];
             }
             else if (OurTompoys[1].OurScore.score > OurTompoys[0].OurScore.score)
             {
                 RoundsWinner[CurrentRound] = 2;
-                return OurTompoys[1];
+                winner = OurTompoys[1];
             }
             else
             {
                 RoundsWinner[CurrentRound] = 0;
-                return null;
             }
+
+            // Триггерим событие после определения победителя
+            OnRoundWinnerDetermined?.Invoke();
+
+            return winner;
         }
         else
         {
-            Debug.LogError("CurrentRound is out of bounds for RoundsWinner array");
             return null;
         }
     }
+
 
     public void CallRestart()
     {

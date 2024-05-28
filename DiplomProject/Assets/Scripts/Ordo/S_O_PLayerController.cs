@@ -235,10 +235,7 @@ public class S_O_PLayerController : MonoBehaviour
 
             StartCoroutine(LaunchTompoy());
         }
-        else
-        {
-            Debug.LogWarning("No alchik objects found.");
-        }
+
     }
     //**************************************************************************RELOCATE TOMPOY***********************************************
     public void ReLocateTompoy()
@@ -306,7 +303,6 @@ public class S_O_PLayerController : MonoBehaviour
 
     public void OnReleaseLMB(InputAction.CallbackContext context)
     {
-        Debug.Log("I'm Trying!");
         if (isAI == false && isMyTurn == true && TompoyClicked == true && ImpulseForce >= 25 && context.performed == true)
         {
             Debug.Log(ImpulseForce);
