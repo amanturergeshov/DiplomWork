@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+
+public class InfoButton : MonoBehaviour
+{
+    [SerializeField] private string header;
+    [SerializeField] private string description;
+    [SerializeField] private Button button;
+
+    public UnityEvent<string, string> onClick;
+
+    private void Start()
+    {
+        button.onClick.AddListener(() => { onClick?.Invoke(header, description); });
+    }
+}
