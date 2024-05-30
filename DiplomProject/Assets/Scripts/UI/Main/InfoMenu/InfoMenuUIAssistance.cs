@@ -17,9 +17,9 @@ public class InfoMenuUIAssistance : MonoBehaviour
         }
     }
 
-    private void UpdateInfo(string header, string description)
+    private void UpdateInfo(string header, TextMeshProUGUI description)
     {
         headerTextComponent.text = header;
-        descriptionTextComponent.text = description;
+        descriptionTextComponent.text = description.text;
     }
 }

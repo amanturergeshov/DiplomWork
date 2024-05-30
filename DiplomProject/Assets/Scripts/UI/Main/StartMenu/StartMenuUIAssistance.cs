@@ -11,7 +11,7 @@ public class StartMenuUIAssistance : MonoBehaviour
 
     [SerializeField] private ThemeButton[] themeButtons;
 
-    private string currentThemeDescription;
+    private TextMeshProUGUI currentThemeDescription;
     private string currentThemeGameSceneName;
 
     private void Start()
@@ -24,18 +24,18 @@ public class StartMenuUIAssistance : MonoBehaviour
         startGameButton.onClick.AddListener(StartGame);
     }
 
-    private void UpdateInfo(string description, string sceneName)
+    private void UpdateInfo(TextMeshProUGUI description, string sceneName)
     {
         currentThemeDescription = description;
         currentThemeGameSceneName = sceneName;
-        descritpionTextComponent.text = description;
+        descritpionTextComponent.text = description.text;
     }
 
     private void StartGame()
     {
-        if (string.IsNullOrEmpty(currentThemeDescription))
+        if (string.IsNullOrEmpty(currentThemeDescription.text))
         {
-            Debug.LogError($"Сцена по названию {currentThemeDescription} не существует. Где то ты наебал меня. Проверь пожалуйста Build Settings, ты кинул эту сцену в список ?");
+            Debug.LogError($"пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ {currentThemeDescription} пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅ пїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ Build Settings, пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ ?");
             return;
         }
         SceneManager.LoadScene(currentThemeGameSceneName);
