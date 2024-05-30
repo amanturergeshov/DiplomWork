@@ -17,15 +17,23 @@ public class S_TK_GameOverScreen : MonoBehaviour
         WinnerScore.text = "SCORE: " + score.ToString();
     }
 
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void RestartButton()
     {
         SceneManager.LoadScene("ToguzKorgol");
         gameObject.SetActive(false);
     }
-
+    private void Awake() {
+        
+        gameObject.SetActive(false);
+    }
     public void ExitButton()
     {
         Debug.Log("Exiting game...");
-        Application.Quit();
+        SceneManager.LoadScene("MainMenuScene");
     }
 }

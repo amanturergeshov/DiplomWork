@@ -2435,6 +2435,8 @@ MonoBehaviour:
   OurScoreLunka: {fileID: 1700986093}
   turnTimeLimit: 600
   TimerString: 
+  GameOverScreen: {fileID: 7134626}
+  GameOverParent: {fileID: 7134622}
 --- !u!4 &541400425
 Transform:
   m_ObjectHideFlags: 0
@@ -3297,6 +3299,8 @@ MonoBehaviour:
   OurScoreLunka: {fileID: 1840367092}
   turnTimeLimit: 600
   TimerString: 
+  GameOverScreen: {fileID: 7134626}
+  GameOverParent: {fileID: 0}
 --- !u!4 &745839140
 Transform:
   m_ObjectHideFlags: 0

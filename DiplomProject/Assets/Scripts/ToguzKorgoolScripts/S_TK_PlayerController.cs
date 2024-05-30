@@ -25,6 +25,10 @@ public class S_TK_PlayerController : MonoBehaviour
     private float turnTimer;
     private bool isTurnTimerRunning;
     public string TimerString;
+
+
+    public S_TK_GameOverScreen GameOverScreen;
+    public GameObject GameOverParent;
     //***************************************START***********************************************
     void Start()
     {
@@ -61,8 +65,10 @@ public class S_TK_PlayerController : MonoBehaviour
             AITurn = false;
             StartCoroutine(AIThinking());
         }
-
-
+        if (Input.GetKeyDown(KeyCode.Escape) && isAI == false)
+        {
+            ToggleGameOverScreen();
+        }
 
     }
 
@@ -222,5 +228,20 @@ public class S_TK_PlayerController : MonoBehaviour
         // Преобразуем время в минуты и секунды
         TimeSpan timeSpan = TimeSpan.FromSeconds(turnTimer);
         TimerString = string.Format("{0:00}:{1:00}", timeSpan.Minutes, timeSpan.Seconds);
+    }
+
+    void ToggleGameOverScreen()
+    {
+        if (GameOverScreen.gameObject.activeSelf)
+        {
+            // Если меню уже отображается, скрываем его
+            Debug.Log("HIDE!");
+            GameOverScreen.Hide();
+        }
+        else
+        {
+            // Если меню скрыто, вызываем его
+            GameOverScreen.Setup("Nobody", OurScoreLunka.score);
+        }
     }
 }

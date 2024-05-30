@@ -33,6 +33,8 @@ public class S_O_GameManager : MonoBehaviour
     //*******************************************************************ROUND PROPERTIES***********************************************************************
     public S_O_GameOverScreen GameOverScreen;
 
+
+
     //*******************************************************************START***********************************************************************
     void Start()
     {
@@ -47,6 +49,28 @@ public class S_O_GameManager : MonoBehaviour
         else
         {
             Debug.LogError("OurTompoys should contain exactly 2 Tompoys.");
+        }
+    }
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            ToggleGameOverScreen();
+        }
+    }
+
+    void ToggleGameOverScreen()
+    {
+        if (GameOverScreen.gameObject.activeSelf)
+        {
+            // Если меню уже отображается, скрываем его
+            Debug.Log("HIDE!");
+            GameOverScreen.Hide();
+        }
+        else
+        {
+            // Если меню скрыто, вызываем его
+            GameOverScreen.Setup("Nobody", OurTompoys[0].OurScore.score);
         }
     }
 

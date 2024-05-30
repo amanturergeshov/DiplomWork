@@ -16,12 +16,21 @@ public class StartMenuUIAssistance : MonoBehaviour
 
     private void Start()
     {
-        for(int i = 0; i < themeButtons.Length; i++)
+        for (int i = 0; i < themeButtons.Length; i++)
         {
             themeButtons[i].onClick.AddListener(UpdateInfo);
         }
 
         startGameButton.onClick.AddListener(StartGame);
+    }
+
+    private void StartGame()
+    {
+        if (string.IsNullOrEmpty(currentThemeDescription.text))
+        {
+            return;
+        }
+        SceneManager.LoadScene(currentThemeGameSceneName);
     }
 
     private void UpdateInfo(TextMeshProUGUI description, string sceneName)
@@ -31,13 +40,4 @@ public class StartMenuUIAssistance : MonoBehaviour
         descritpionTextComponent.text = description.text;
     }
 
-    private void StartGame()
-    {
-        if (string.IsNullOrEmpty(currentThemeDescription.text))
-        {
-            Debug.LogError($"����� �� �������� {currentThemeDescription} �� ����������. ��� �� �� ������ ����. ������� ���������� Build Settings, �� ����� ��� ����� � ������ ?");
-            return;
-        }
-        SceneManager.LoadScene(currentThemeGameSceneName);
-    }
 }

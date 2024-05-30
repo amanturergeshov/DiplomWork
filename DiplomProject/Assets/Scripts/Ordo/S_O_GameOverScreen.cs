@@ -26,6 +26,10 @@ public class S_O_GameOverScreen : MonoBehaviour
     public void ExitButton()
     {
         Debug.Log("Exiting game...");
-        Application.Quit();
+        SceneManager.LoadScene("MainMenuScene");
+    }
+    public void Hide()
+    {
+        gameObject.SetActive(false);
     }
 }

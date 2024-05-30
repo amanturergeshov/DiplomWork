@@ -224,7 +224,7 @@ public class S_O_PLayerController : MonoBehaviour
             float delay = UnityEngine.Random.Range(2f, 3f);
             yield return new WaitForSeconds(delay);
 
-            ImpulseForce = 80;
+            ImpulseForce = 110;
             GameObject randomAlchik = alchikObjects[UnityEngine.Random.Range(0, alchikObjects.Count)];
 
             Vector3 direction = randomAlchik.transform.position - Tompoy.transform.position;
