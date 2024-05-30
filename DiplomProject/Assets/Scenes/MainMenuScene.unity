@@ -940,7 +940,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   header: Ordo
   sceneName: Ordo
-  gameSprite: {fileID: 0}
+  gameSprite: {fileID: 21300000, guid: d99faae04eadfda4eb2cdf40d42d5ae7, type: 3}
   button: {fileID: 177619382}
   onClick:
     m_PersistentCalls:
@@ -1852,7 +1852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   header: ToguzKorgol
   sceneName: ToguzKorgol
-  gameSprite: {fileID: 0}
+  gameSprite: {fileID: 21300000, guid: 881bd869e6858b94591f0657b9e4e229, type: 3}
   button: {fileID: 413559762}
   onClick:
     m_PersistentCalls:
@@ -7712,7 +7712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1770876409
 RectTransform:
   m_ObjectHideFlags: 0
