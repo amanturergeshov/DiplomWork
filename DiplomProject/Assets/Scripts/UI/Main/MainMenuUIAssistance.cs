@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using TMPro.EditorUtilities;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,11 +27,11 @@ public class MainMenuUIAssistance : MonoBehaviour
         }
 
         quitButton.onClick.AddListener(QuitGame);
-        // По дефолту пиздим мейн меню
+        // пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ
         OpenPanel("main");
     }
     /// <summary>
-    /// Остальная хуйня вызывается в кнопках
+    /// пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
     /// </summary>
     /// <param name="key"></param>
     public void OpenPanel(string key)
@@ -46,7 +43,7 @@ public class MainMenuUIAssistance : MonoBehaviour
         }
         else
         {
-            Debug.Log($"Не нашли панельку: {key}");
+            Debug.Log($"пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {key}");
         }
 
         SetActiveCurrentPanel(true);
